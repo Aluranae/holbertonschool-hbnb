@@ -30,7 +30,7 @@ class User(BaseModel):
     __slots__ = BaseModel.__slots__ + ('first_name', 'last_name', 'email',
                                        'is_admin', 'places', 'reviews')
 
-    def __init__(self, first_name, last_name, email, password, is_admin=False):
+    def __init__(self, first_name, last_name, email, is_admin=False):
         """
         Constructeur de la classe User.
 
