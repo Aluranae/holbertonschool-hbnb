@@ -13,7 +13,7 @@ def test_create_valid_review():
     et que ses attributs sont correctement initialisés.
     """
     # Création d'un utilisateur et d'un lieu
-    user = User(first_name="Leia", last_name="Organa", email="leia@rebellion.org")
+    user = User(first_name="Leia", last_name="Organa", email="leia@rebellion.org", password="alderaan_secure123")
     place = Place(
         title="Base Echo",
         description="Refuge sur Hoth",
@@ -58,7 +58,7 @@ def test_repr_contains_expected_info():
     la note et l’ID de l’auteur.
     """
     # Création des objets nécessaires
-    user = User(first_name="Han", last_name="Solo", email="han@falcon.space")
+    user = User(first_name="Han", last_name="Solo", email="han@falcon.space", password="alderaan_secure123")
     place = Place(
         title="Cantina Mos Eisley",
         description="Bar très fréquenté par des contrebandiers",
@@ -95,7 +95,7 @@ def test_str_returns_readable_format():
     la note et le texte de l’avis.
     """
     # Création d’un utilisateur et d’un lieu
-    user = User(first_name="Obi-Wan", last_name="Kenobi", email="obiwan@jedi.org")
+    user = User(first_name="Obi-Wan", last_name="Kenobi", email="obiwan@jedi.org", password="alderaan_secure123")
     place = Place(
         title="Tatooine Refuge",
         description="Une cachette dans le désert",
@@ -132,7 +132,7 @@ def test_missing_text_raises_error():
     R4. Vérifie qu'une TypeError est levée si l'on oublie le champ 'text'
     lors de la création d’un Review.
     """
-    user = User(first_name="Padmé", last_name="Amidala", email="padme@naboo.gal")
+    user = User(first_name="Padmé", last_name="Amidala", email="padme@naboo.gal", password="alderaan_secure123")
     place = Place(
         title="Palais de Theed",
         description="Lieu royal élégant",
@@ -161,7 +161,7 @@ def test_missing_rating_raises_error():
     R5. Vérifie qu'une TypeError est levée si l'on oublie le champ 'rating'
     lors de la création d’un Review.
     """
-    user = User(first_name="Lando", last_name="Calrissian", email="lando@bespin.gov")
+    user = User(first_name="Lando", last_name="Calrissian", email="lando@bespin.gov", password="alderaan_secure123")
     place = Place(
         title="Cloud City",
         description="Station flottante au-dessus de Bespin",
@@ -190,7 +190,7 @@ def test_missing_author_raises_error():
     R6. Vérifie qu'une TypeError est levée si l'on oublie le champ 'author'
     lors de la création d’un Review.
     """
-    user = User(first_name="Qui-Gon", last_name="Jinn", email="quigon@jedi.org")
+    user = User(first_name="Qui-Gon", last_name="Jinn", email="quigon@jedi.org", password="alderaan_secure123")
     place = Place(
         title="Auberge de Tython",
         description="Lieu d’étude de la Force",
@@ -219,7 +219,7 @@ def test_missing_place_raises_error():
     R7. Vérifie qu'une TypeError est levée si l'on oublie le champ 'place'
     lors de la création d’un Review.
     """
-    user = User(first_name="Ahsoka", last_name="Tano", email="ahsoka@togruta.net")
+    user = User(first_name="Ahsoka", last_name="Tano", email="ahsoka@togruta.net", password="alderaan_secure123")
     # Un lieu est quand même créé pour l’attribut owner, mais non utilisé
     dummy_place = Place(
         title="Temple de Coruscant",
@@ -248,7 +248,7 @@ def test_text_must_be_string():
     """
     R8. Vérifie qu'une TypeError est levée si 'text' n'est pas une string.
     """
-    user = User(first_name="Bo-Katan", last_name="Kryze", email="bokatan@mandalore.org")
+    user = User(first_name="Bo-Katan", last_name="Kryze", email="bokatan@mandalore.org", password="alderaan_secure123")
     place = Place(
         title="Dôme de Sundari",
         description="Ville protégée par une coupole",
@@ -274,7 +274,7 @@ def test_text_cannot_be_empty():
     """
     R9. Vérifie qu'une ValueError est levée si 'text' est une chaîne vide.
     """
-    user = User(first_name="Yoda", last_name="Mystery", email="yoda@dagobah.system")  # ✅ Correction ici
+    user = User(first_name="Yoda", last_name="Mystery", email="yoda@dagobah.system", password="alderaan_secure123")  # ✅ Correction ici
     place = Place(
         title="Marais de Dagobah",
         description="Retraite d’un maître Jedi",
@@ -300,7 +300,7 @@ def test_text_stripped_empty():
     """
     R10. Vérifie qu'une ValueError est levée si 'text' contient uniquement des espaces.
     """
-    user = User(first_name="Cal", last_name="Kestis", email="cal@jedifallen.com")
+    user = User(first_name="Cal", last_name="Kestis", email="cal@jedifallen.com", password="alderaan_secure123")
     place = Place(
         title="Méditation sur Zeffo",
         description="Ancien tombeau céleste",
@@ -326,7 +326,7 @@ def test_text_too_long():
     """
     R11. Vérifie qu'une ValueError est levée si 'text' dépasse 500 caractères.
     """
-    user = User(first_name="Cassian", last_name="Andor", email="andor@rebellion.net")
+    user = User(first_name="Cassian", last_name="Andor", email="andor@rebellion.net", password="alderaan_secure123")
     place = Place(
         title="Base sur Ferrix",
         description="Avant-poste rebelle discret",
@@ -355,7 +355,7 @@ def test_text_exactly_500_characters():
     """
     R12. Vérifie qu’un Review peut être créé avec un texte de 500 caractères pile.
     """
-    user = User(first_name="Saw", last_name="Gerrera", email="saw@onderon.rebel")
+    user = User(first_name="Saw", last_name="Gerrera", email="saw@onderon.rebel", password="alderaan_secure123")
     place = Place(
         title="Cave de Jedha",
         description="Refuge des extrémistes rebelles",
@@ -387,7 +387,7 @@ def test_rating_must_be_int():
     """
     R13. Vérifie qu'une TypeError est levée si 'rating' n’est pas un entier.
     """
-    user = User(first_name="Jyn", last_name="Erso", email="jyn@scarif.rebel")
+    user = User(first_name="Jyn", last_name="Erso", email="jyn@scarif.rebel", password="alderaan_secure123")
     place = Place(
         title="Base secrète de Scarif",
         description="Planète archiviste de l’Empire",
@@ -424,7 +424,7 @@ def test_rating_too_low():
     """
     R14. Vérifie qu'une ValueError est levée si 'rating' est inférieur à 1.
     """
-    user = User(first_name="Hera", last_name="Syndulla", email="hera@ghost.net")
+    user = User(first_name="Hera", last_name="Syndulla", email="hera@ghost.net", password="alderaan_secure123")
     place = Place(
         title="Phare de Lothal",
         description="Poste d’observation rebelle",
@@ -449,7 +449,7 @@ def test_rating_too_high():
     """
     R15. Vérifie qu'une ValueError est levée si 'rating' est supérieur à 5.
     """
-    user = User(first_name="Kanan", last_name="Jarrus", email="kanan@jedi.ghost")
+    user = User(first_name="Kanan", last_name="Jarrus", email="kanan@jedi.ghost", password="alderaan_secure123")
     place = Place(
         title="Ruines de Malachor",
         description="Temple Sith ancien",
@@ -475,7 +475,7 @@ def test_rating_bounds_valid():
     """
     R16. Vérifie que les valeurs limites de rating (1 et 5) sont valides.
     """
-    user = User(first_name="Ezra", last_name="Bridger", email="ezra@lothal.net")
+    user = User(first_name="Ezra", last_name="Bridger", email="ezra@lothal.net", password="alderaan_secure123")
     place = Place(
         title="Tour d'observation de Lothal",
         description="Point stratégique sur Lothal",
@@ -512,7 +512,7 @@ def test_author_must_be_User_instance():
     """
     R17. Vérifie qu'une TypeError est levée si 'author' n’est pas une instance de User.
     """
-    user = User(first_name="Thrawn", last_name="Mitth", email="thrawn@empire.gov")
+    user = User(first_name="Thrawn", last_name="Mitth", email="thrawn@empire.gov", password="alderaan_secure123")
     place = Place(
         title="Croiseur Chimaera",
         description="Navire de commandement impérial",
@@ -539,7 +539,7 @@ def test_author_can_be_used_in_repr():
     """
     R18. Vérifie que l’ID de l’auteur est présent dans le __repr__ du Review.
     """
-    user = User(first_name="Bail", last_name="Organa", email="bail@alderaan.gov")
+    user = User(first_name="Bail", last_name="Organa", email="bail@alderaan.gov", password="alderaan_secure123")
     place = Place(
         title="Palais d’Alderaan",
         description="Demeure royale de la famille Organa",
@@ -567,7 +567,7 @@ def test_place_must_be_Place_instance():
     """
     R19. Vérifie qu'une TypeError est levée si 'place' n’est pas une instance de Place.
     """
-    user = User(first_name="Mon", last_name="Mothma", email="mon@senate.rep")
+    user = User(first_name="Mon", last_name="Mothma", email="mon@senate.rep", password="alderaan_secure123")
 
     with pytest.raises(TypeError) as excinfo:
         Review(
@@ -585,7 +585,7 @@ def test_multiple_reviews_same_author_place():
     """
     R20. Vérifie qu’on peut créer plusieurs Review avec le même auteur et le même lieu.
     """
-    user = User(first_name="Din", last_name="Djarin", email="mando@navarro.system")
+    user = User(first_name="Din", last_name="Djarin", email="mando@navarro.system", password="alderaan_secure123")
     place = Place(
         title="Forge Mandalorienne",
         description="Lieu sacré des armuriers",
@@ -628,8 +628,8 @@ def test_reviews_can_have_same_text_different_rating():
     R21. Vérifie qu’on peut créer deux Review avec le même texte,
     mais des notes différentes (et/ou auteur/place différents).
     """
-    user1 = User(first_name="Tech", last_name="CloneForce99", email="tech@badbatch.org")
-    user2 = User(first_name="Echo", last_name="CloneForce99", email="echo@badbatch.org")
+    user1 = User(first_name="Tech", last_name="CloneForce99", email="tech@badbatch.org", password="alderaan_secure123")
+    user2 = User(first_name="Echo", last_name="CloneForce99", email="echo@badbatch.org", password="alderaan_secure123")
 
     place = Place(
         title="Vaisseau Marauder",
@@ -653,3 +653,34 @@ def test_reviews_can_have_same_text_different_rating():
     assert review1.text == review2.text
     assert review1.rating != review2.rating
     assert review1.author != review2.author
+
+
+def test_review_creation_establishes_bidirectional_links():
+    """
+    Vérifie que la création d'un Review établit automatiquement les liens
+    avec l'utilisateur (User.reviews) et le lieu (Place.reviews).
+    """
+    # Création d'un utilisateur
+    user = User(first_name="Obi-Wan", last_name="Kenobi", email="obiwan@jedi.org", password="alderaan_secure123")
+
+    # Création d'un lieu
+    place = Place(
+        title="Cabane sur Tatooine",
+        description="Modeste refuge dans le désert",
+        price=15.0,
+        latitude=23.5,
+        longitude=45.1,
+        owner=user
+    )
+
+    # Création d'un avis
+    review = Review(
+        text="Endroit très calme, parfait pour méditer.",
+        rating=5,
+        author=user,
+        place=place
+    )
+
+    # Vérification des relations automatiques
+    assert review in user.reviews
+    assert review in place.reviews

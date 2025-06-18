@@ -63,6 +63,7 @@ class Place(BaseModel):
         self.latitude = self.validate_latitude(latitude, "Latitude")
         self.longitude = self.validate_longitude(longitude, "Longitude")
         self.owner = self.validate_owner(owner, "Owner")
+        owner.places.append(self)
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
 

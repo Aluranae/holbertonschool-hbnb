@@ -47,6 +47,8 @@ class Review(BaseModel):
         self.rating = self.validate_rating(rating, "Rating")
         self.author = self.validate_author(author, "Author")
         self.place = self.validate_place(place, "Place")
+        author.reviews.append(self)
+        place.reviews.append(self)
 
     # ==========================
     # MÉTHODES DE VALIDATION
