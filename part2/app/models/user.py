@@ -28,8 +28,7 @@ class User(BaseModel):
     """
 
     __slots__ = BaseModel.__slots__ + ('first_name', 'last_name', 'email',
-                                       'is_admin', 'places', 'reviews',
-                                       '_User__password')
+                                       'is_admin', 'places', 'reviews')
 
     def __init__(self, first_name, last_name, email, password, is_admin=False):
         """
@@ -49,7 +48,6 @@ class User(BaseModel):
         self.first_name = self.validate_name(first_name, "First name")
         self.last_name = self.validate_name(last_name, "Last name")
         self.email = self.validate_email(email)
-        self.__password = self.validate_password(password)
         self.is_admin = bool(is_admin)
         self.places = []  # ← Relation un-à-plusieurs : User → [Place]
         self.reviews = []  # ← Relation un-à-plusieurs : User → [Review]
@@ -78,26 +76,6 @@ class User(BaseModel):
         if not re.match(r"^[^@]+@[^@]+\.[^@]+$", value):
             raise ValueError("Invalid email format")
         return value
-
-    def validate_password(self, value):
-        """Valide le mot de passe : type str, non vide, min 8 caractères."""
-        if not isinstance(value, str):
-            raise TypeError("Password must be a string")
-        value = value.strip()
-        if not value:
-            raise ValueError("Password is required")
-        if len(value) < 12:
-            raise ValueError("Password must be at least 12 characters")
-        return value
-
-    def check_password(self, password_to_check):
-        """
-        Vérifie si le mot de passe fourni correspond à celui de l'utilisateur.
-        Actuellement : comparaison directe (non hashée).
-        """
-        if not isinstance(password_to_check, str):
-            raise TypeError("Password to check must be a string")
-        return self.__password == password_to_check.strip()
 
     def __repr__(self):
         """
