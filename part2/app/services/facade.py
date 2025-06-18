@@ -26,7 +26,8 @@ class HBnBFacade:
 
     def get_user_by_id(self, user_id):
         """
-        Alias explicite de get_user pour répondre à certains besoins métier/API.
+        Alias explicite de get_user pour répondre à certains besoins métier/
+        API.
         """
         return self.get_user(user_id)
 
@@ -146,7 +147,8 @@ class HBnBFacade:
         Retourne l'objet Place ou None si non trouvé.
         """
         return next(
-            (place for place in self.place_repo.get_all() if place.title == title),
+            (place for place in self.place_repo.get_all() if place.title ==
+             title),
             None
         )
 
@@ -328,7 +330,8 @@ class HBnBFacade:
             review.text = review.validate_text(update_data["text"], "Text")
 
         if "rating" in update_data:
-            review.rating = review.validate_rating(update_data["rating"], "Rating")
+            review.rating = review.validate_rating(update_data["rating"],
+                                                   "Rating")
 
         self.review_repo.add(review)
         return review
