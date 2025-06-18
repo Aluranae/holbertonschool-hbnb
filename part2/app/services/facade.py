@@ -1,3 +1,4 @@
+import uuid
 from app.persistence.repository import InMemoryRepository
 from app.models.user import User
 from app.models.place import Place
@@ -19,9 +20,13 @@ class HBnBFacade:
     # Récupération d'un utilisateur par ID
     def get_user(self, user_id):
         """
-        Récupère un utilisateur par son identifiant.
-        Retourne l'objet User ou None si non trouvé.
+        Récupère un utilisateur par son identifiant (UUID ou string).
+        Retourne l'objet User ou None si non trouvé ou mal formaté.
         """
+        try:
+            user_id = uuid.UUID(user_id)  # Convertit la chaîne en UUID si besoin
+        except (ValueError, TypeError):
+            return None
         return self.user_repo.get(user_id)
 
     def get_user_by_id(self, user_id):
