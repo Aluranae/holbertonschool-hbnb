@@ -37,7 +37,7 @@ class UserList(Resource):
     @api.marshal_list_with(user_output_model)
     def get(self):
         """List all users"""
-        return facade.get_all_users(), 200
+        return facade.get_users(), 200
 
 @api.route('/<user_id>')
 class UserResource(Resource):

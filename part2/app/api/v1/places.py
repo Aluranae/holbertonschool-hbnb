@@ -210,7 +210,7 @@ class PlaceResource(Resource):
         # - Détection de l'absence de changement
         no_changes_detected = all(
             getattr(place, field) == data.get(field)
-            for field in ['title', 'description', 'price', 'latitude', 'longitude', 'owner_id']
+            for field in ['title', 'description', 'price', 'latitude', 'longitude']
             if data.get(field) is not None
         )
         if no_changes_detected:

@@ -17,81 +17,28 @@ class HBnBFacade:
     # ==========================
 
     # Récupération d'un utilisateur par ID
-    def get_user(self, user_id):
-        """
-        Récupère un utilisateur par son identifiant (UUID ou string).
-        Retourne l'objet User ou None si non trouvé ou mal formaté.
-        """
-        return self.user_repo.get(user_id)
-
-    def get_user_by_id(self, user_id):
-        """
-        Alias explicite de get_user pour répondre à certains besoins métier/
-        API.
-        """
-        return self.get_user(user_id)
-
-    def get_user_by_email(self, email):
-        """
-        Recherche un utilisateur par adresse e-mail.
-        Retourne l'objet User correspondant ou None si non trouvé.
-        """
-        return next(
-            (user for user in self.user_repo.get_all() if user.email == email),
-            None
-        )
-
-    def get_all_users(self):
-        """
-        Retourne la liste de tous les utilisateurs.
-        """
-        return self.user_repo.get_all()
-
     def create_user(self, user_data):
-        """
-        Crée un nouvel utilisateur à partir d'un dictionnaire de données.
-        Exige : first_name, last_name, email (is_admin est optionnel).
-        Vérifie que l'e-mail n'est pas déjà utilisé.
-        Lève une ValueError si doublon ou données invalides.
-        """
-        # Vérifie l'unicité de l'e-mail
-        if self.get_user_by_email(user_data["email"]):
-            raise ValueError("Email already registered")
-
-        try:
-            user = User(
-                first_name=user_data["first_name"],
-                last_name=user_data["last_name"],
-                email=user_data["email"],
-                is_admin=user_data.get("is_admin", False)
-            )
-            self.user_repo.add(user)
-            return user
-        except (KeyError, TypeError, ValueError) as e:
-            raise ValueError(f"Invalid user data: {e}")
-
-    def update_user(self, user_id, update_data):
-        """
-        Met à jour un utilisateur existant avec les données fournies.
-        Lève une ValueError si l'utilisateur n'existe pas.
-        """
-        user = self.get_user(user_id)
-        if not user:
-            raise ValueError(f"User with ID {user_id} not found")
-
-        user.update(update_data)  # méthode fournie par BaseModel
-        self.user_repo.add(user)  # réécriture dans le stockage
+        user = User(**user_data)
+        self.user_repo.add(user)
         return user
 
-    def delete_user(self, user_id):
-        """
-        Supprime un utilisateur par son identifiant.
-        Retourne True si suppression réussie, False sinon.
-        """
-        if self.get_user(user_id):
-            self.user_repo.delete(user_id)
-            return True
-        return False
+    def get_user(self, user_id):
+        return self.user_repo.get(user_id)
+
+    def get_user_by_email(self, email):
+        return self.user_repo.get_by_attribute('email', email)
+
+    def get_users(self):
+        return self.user_repo.get_all()
+
+    def update_user(self, user_id, user_data):
+        user = self.get_user(user_id)
+        if not user:
+            return None
+        for key, value in user_data.items():
+            setattr(user, key, value)
+        self.user_repo.update(user.id, user_data)
+        return user
 
     # ==========================
     # Gestion de Place
