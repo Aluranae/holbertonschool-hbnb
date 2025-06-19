@@ -114,6 +114,12 @@ class HBnBFacade:
             place for place in self.place_repo.get_all()
             if place.owner and place.owner.id == user_id
         ]
+    
+    def get_places_by_owner(self, owner_id):
+        """
+        Retourne tous les lieux appartenant à un propriétaire donné.
+        """
+        return [p for p in self.place_repo.data.values() if p.owner.id == owner_id]
 
     def update_place(self, place_id, update_data):
         """
@@ -124,13 +130,19 @@ class HBnBFacade:
         if not place:
             raise ValueError(f"Place with ID {place_id} not found")
 
-        # Séparation de la liste des amenities, si présente
+        # - Vérification de conflit sur le titre
+        if "title" in update_data and update_data["title"] != place.title:
+            for other_place in self.get_places_by_owner(place.owner.id):
+                if other_place.id != place.id and other_place.title == update_data["title"]:
+                    raise ValueError("Title already used by this owner")
+
+        # - Séparation de la liste des amenities, si présente
         amenities = update_data.pop("amenities", None)
 
-        # Mise à jour des autres champs (title, price, etc.)
+        # - Mise à jour des autres champs
         place.update(**update_data)
 
-        # Mise à jour des amenities si fournie
+        # - Mise à jour des amenities si fournie
         if amenities is not None:
             place.amenities.clear()
             for amenity in amenities:

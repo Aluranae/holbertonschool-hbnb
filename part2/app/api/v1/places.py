@@ -85,7 +85,7 @@ class PlaceList(Resource):
             # Vérification de l’unicité du titre pour ce owner
             existing_place = facade.get_place_by_title(title)
             if existing_place and existing_place.owner.id == owner_id:
-                return {"error": "This owner already has a place with the same"
+                return {"error": "This owner already has a place with the same" 
                         "title"}, 409
 
             # Création du lieu
@@ -263,4 +263,7 @@ class PlaceResource(Resource):
             }, 200
 
         except (ValueError, TypeError) as e:
-            return {'error': str(e)}, 400
+            error_msg = str(e)
+            if "Title already used" in error_msg:
+                return {'error': error_msg}, 409  # Spécial conflict
+            return {'error': error_msg}, 400  # Autres cas : Bad Request
