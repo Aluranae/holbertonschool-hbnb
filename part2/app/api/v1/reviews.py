@@ -1,6 +1,5 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from flask_restx import marshal
 
 api = Namespace('reviews', description='Review operations')
 
@@ -8,18 +7,21 @@ api = Namespace('reviews', description='Review operations')
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
     'rating': fields.Integer(required=True, description='Rating of the place (1-5)', min=1, max=5),
-    'user_id': fields.String(required=True, description='ID of the user'),
+    'user_id': fields.String(required=True, description='ID of the author (User)'),
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
-review_output_model = api.inherit('ReviewOut', review_model, {
-    'id': fields.String(readonly=True, description='Review ID')
+review_output_model = api.model('ReviewOut', {
+    'id': fields.String(readonly=True, description='Review ID'),
+    'text': fields.String(required=True, description='Text of the review'),
+    'rating': fields.Integer(required=True, description='Rating of the place (1-5)', min=1, max=5),
+    'user_id': fields.String(attribute='user_id', description='ID of the author (User)'),
+    'place_id': fields.String(attribute='place_id', description='ID of the place')
 })
 
 message_model = api.model('Message', {
     'message': fields.String(description='A response message')
 })
-
 
 @api.route('/')
 class ReviewList(Resource):
@@ -43,7 +45,6 @@ class ReviewList(Resource):
         reviews = facade.get_all_reviews()
         return reviews, 200
 
-
 @api.route('/<review_id>')
 class ReviewResource(Resource):
     @api.response(200, 'Review details retrieved successfully')
@@ -60,109 +61,52 @@ class ReviewResource(Resource):
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
-    @api.response(500, 'Internal server error')
+    @api.marshal_with(review_output_model)
     def put(self, review_id):
-        """
-        Update a review's information by its ID.
-        """
+        """Update a review's information"""
         try:
-            updated_review = facade.update_review(review_id, api.payload)
-
-            if not updated_review:
-                return {"error": "Review not found"}, 404
-
-            # Retourne directement le dict
-            return updated_review, 200
-
+            updated = facade.update_review(review_id, api.payload)
+            return updated
         except ValueError as e:
-            # Cas explicite : champ manquant, mauvais ID, etc.
             msg = str(e)
-            if "not found" in msg.lower():
-                return {"error": msg}, 404
-            return {"error": msg}, 400
-
-        except Exception as e:
-            # Cas inattendu (ex: problème interne)
-            print(f"[ERROR] PUT /reviews/{review_id}: {e}")
-            return {"error": "Internal server error"}, 500
+            if msg.endswith('not found'):
+                api.abort(404, msg)
+            api.abort(400, msg)
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
-    @api.response(500, 'Internal server error')
     def delete(self, review_id):
-        """
-        Delete a review by its ID.
-        """
+        """Delete a review"""
         try:
             facade.delete_review(review_id)
-            return {"message": "Review deleted successfully"}, 200
-
-        except ValueError as e:
-            # Renvoie un message propre sans api.abort
-            if "not found" in str(e).lower():
-                return {"error": str(e)}, 404
-            return {"error": str(e)}, 400
-
-        except Exception as e:
-            # Fallback en cas de bug inattendu
-            print(f"[ERROR] DELETE /reviews/{review_id}: {e}")
-            return {"error": "Internal server error"}, 500
-
+            return {'message': 'Review deleted successfully'}, 200
+        except ValueError:
+            api.abort(404, 'Review not found')
 
 @api.route('/places/<place_id>/reviews')
 class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
-    @api.response(404, 'Place not found or no reviews available')
-    @api.response(500, 'Internal server error')
+    @api.response(404, 'Place not found')
+    @api.marshal_list_with(review_output_model)
     def get(self, place_id):
-        """
-        Get all reviews for a specific place.
-        """
+        """Get all reviews for a specific place"""
         try:
             reviews = facade.get_reviews_by_place(place_id)
-
-            if not reviews:
-                return {"error": "No reviews found for this place"}, 404
-
-            return marshal(reviews, review_output_model), 200
-
+            return reviews, 200
         except ValueError as e:
-            if "Place not found" in str(e):
-                return {"error": str(e)}, 404
-            return {"error": str(e)}, 400
-
-        except Exception as e:
-            print(f"[ERROR] Unexpected error in PlaceReviewList: {e}")
-            return {"error": "Internal server error"}, 500
-
+            api.abort(404, str(e))
 
 @api.route('/users/<string:user_id>/reviews')
 class UserReviewList(Resource):
     @api.response(200, 'List of reviews for the user retrieved successfully')
     @api.response(404, 'User not found or no reviews found')
-    @api.response(500, 'Internal server error')
+    @api.marshal_list_with(review_output_model)
     def get(self, user_id):
-        """
-        Get all reviews written by a specific user.
-        """
+        """Get all reviews written by a specific user"""
         try:
-            # Récupère les reviews depuis la couche métier
             reviews = facade.get_reviews_by_user(user_id)
-
-            # Si l'utilisateur existe mais n'a posté aucun avis
             if not reviews:
-                return {"error": "No reviews found for this user"}, 404
-
-            # Appliquer manuellement le modèle uniquement ici
-            return marshal(reviews, review_output_model), 200
-
-        except ValueError as e:
-            # Cas explicite : utilisateur introuvable
-            if "User not found" in str(e):
-                return {"error": str(e)}, 404
-            return {"error": str(e)}, 400
-
-        except Exception as e:
-            # En cas d'erreur imprévue (debug possible ici)
-            print(f"[ERROR] Unexpected error in UserReviewList: {e}")
-            return {"error": "Internal server error"}, 500
+                api.abort(404, "No reviews found for this user")
+            return reviews, 200
+        except Exception:
+            api.abort(500, "Internal server error")
