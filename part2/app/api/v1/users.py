@@ -15,6 +15,7 @@ user_output_model = api.inherit('UserOutput', user_input_model, {
     'id': fields.String(readonly=True, description='User ID')
 })
 
+
 @api.route('/')
 class UserList(Resource):
     @api.expect(user_input_model, validate=True)
@@ -31,8 +32,12 @@ class UserList(Resource):
         if existing_user:
             api.abort(400, 'Email already registered')
 
-        new_user = facade.create_user(user_data)
-        return new_user, 201
+        try:
+            new_user = facade.create_user(user_data)
+            return new_user, 201
+        except (ValueError, TypeError) as e:
+            # Si les données sont invalides (ex : email malformé)
+            api.abort(400, str(e))
 
     @api.marshal_list_with(user_output_model)
     def get(self):
