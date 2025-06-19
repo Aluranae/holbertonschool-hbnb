@@ -1,4 +1,6 @@
 from app.persistence.repository import InMemoryRepository
+from app.models.user import User  # Assure-toi d'avoir ce modèle User
+from app.models.amenity import Amenity  # Import du modèle Amenity
 
 class HBnBFacade:
     def __init__(self):
@@ -7,12 +9,48 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
-    # Méthode placeholder pour créer un user
+    # Méthodes users (existantes)
     def create_user(self, user_data):
-        # La logique sera implémentée dans les tâches ultérieures
-        pass
+        user = User(**user_data)
+        self.user_repo.add(user)
+        return user
 
-    # Méthode placeholder pour récupérer un place par ID
-    def get_place(self, place_id):
-        # La logique sera implémentée dans les tâches ultérieures
-        pass
+    def get_user(self, user_id):
+        return self.user_repo.get(user_id)
+
+    def get_user_by_email(self, email):
+        return self.user_repo.get_by_attribute('email', email)
+
+    def get_users(self):
+        return self.user_repo.get_all()
+
+    def update_user(self, user_id, user_data):
+        user = self.get_user(user_id)
+        if not user:
+            return None
+        for key, value in user_data.items():
+            setattr(user, key, value)
+        self.user_repo.update(user)
+        return user
+
+    # --- Ajout des méthodes Amenities ---
+
+    def create_amenity(self, amenity_data):
+        amenity = Amenity(**amenity_data)
+        self.amenity_repo.add(amenity)
+        return amenity
+
+    def get_amenity(self, amenity_id):
+        return self.amenity_repo.get(amenity_id)
+
+    def get_all_amenities(self):
+        return self.amenity_repo.get_all()
+
+    def update_amenity(self, amenity_id, amenity_data):
+        amenity = self.get_amenity(amenity_id)
+        if not amenity:
+            return None
+        for key, value in amenity_data.items():
+            setattr(amenity, key, value)
+        self.amenity_repo.update(amenity)
+        return amenity
