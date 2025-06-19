@@ -262,5 +262,5 @@ class PlaceResource(Resource):
                 ]
             }, 200
 
-        except ValueError as e:
+        except (ValueError, TypeError) as e:
             return {'error': str(e)}, 400
