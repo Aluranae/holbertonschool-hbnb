@@ -23,10 +23,6 @@ class HBnBFacade:
         Récupère un utilisateur par son identifiant (UUID ou string).
         Retourne l'objet User ou None si non trouvé ou mal formaté.
         """
-        try:
-            user_id = uuid.UUID(user_id)  # Convertit la chaîne en UUID si besoin
-        except (ValueError, TypeError):
-            return None
         return self.user_repo.get(user_id)
 
     def get_user_by_id(self, user_id):
