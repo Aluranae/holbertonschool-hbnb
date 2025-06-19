@@ -53,4 +53,5 @@ class HBnBFacade:
         for key, value in amenity_data.items():
             setattr(amenity, key, value)
         self.amenity_repo.update(amenity)
-        return amenity
+        return amenity  
+    
