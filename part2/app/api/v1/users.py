@@ -12,7 +12,8 @@ user_input_model = api.model('UserInput', {
 
 # Modèle de sortie (hérite du modèle d'entrée + id)
 user_output_model = api.inherit('UserOutput', user_input_model, {
-    'id': fields.String(readonly=True, description='User ID')
+    'id': fields.String(readonly=True, description='User ID'),
+    'is_admin': fields.Boolean(description='Whether the user is an admin')
 })
 
 
@@ -27,7 +28,7 @@ class UserList(Resource):
         """Register a new user"""
         user_data = api.payload
 
-        # Check email uniqueness
+        # Vérifie l'unicité de l'email
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user:
             api.abort(400, 'Email already registered')
@@ -42,7 +43,7 @@ class UserList(Resource):
     @api.marshal_list_with(user_output_model)
     def get(self):
         """List all users"""
-        return facade.get_users(), 200
+        return facade.get_all_users(), 200
 
 @api.route('/<user_id>')
 class UserResource(Resource):
