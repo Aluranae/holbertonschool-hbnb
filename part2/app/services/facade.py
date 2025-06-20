@@ -302,7 +302,14 @@ class HBnBFacade:
             place.add_review(review)      # synchronisation relationnelle
             self.place_repo.add(place)    # re-save du lieu avec la review liée
 
-            return review
+            # retourne un dict sérialisable
+            return {
+                "id": review.id,
+                "text": review.text,
+                "rating": review.rating,
+                "user_id": review.author.id,
+                "place_id": review.place.id
+            }
 
         except (KeyError, TypeError, ValueError) as e:
             raise ValueError(f"Invalid review data: {e}")
@@ -353,8 +360,14 @@ class HBnBFacade:
         # Sauvegarde dans le repo
         self.review_repo.add(review)
 
-        # Retourne l'objet Review mis à jour (utilisé dans .to_dict() côté API)
-        return review
+        # retourne un dict sérialisable
+        return {
+            "id": review.id,
+            "text": review.text,
+            "rating": review.rating,
+            "user_id": review.author.id,
+            "place_id": review.place.id
+        }
 
     def delete_review(self, review_id):
         """
