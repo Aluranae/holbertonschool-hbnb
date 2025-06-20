@@ -269,8 +269,12 @@ class HBnBFacade:
     def get_reviews_by_place(self, place_id):
         """
         Retourne la liste des avis associés à un lieu donné.
-        Retourne [] si aucun.
+        Soulève une erreur si le lieu est introuvable.
         """
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError("Place not found")
+
         return [
             review for review in self.review_repo.get_all()
             if review.place and review.place.id == place_id
