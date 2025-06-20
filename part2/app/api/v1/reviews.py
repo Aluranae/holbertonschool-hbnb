@@ -85,15 +85,28 @@ class ReviewResource(Resource):
 @api.route('/places/<place_id>/reviews')
 class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
-    @api.response(404, 'Place not found')
-    @api.marshal_list_with(review_output_model)
+    @api.response(404, 'Place not found or no reviews available')
+    @api.response(500, 'Internal server error')
     def get(self, place_id):
-        """Get all reviews for a specific place"""
+        """
+        Get all reviews for a specific place.
+        """
         try:
             reviews = facade.get_reviews_by_place(place_id)
-            return reviews, 200
+
+            if not reviews:
+                return {"error": "No reviews found for this place"}, 404
+
+            return marshal(reviews, review_output_model), 200
+
         except ValueError as e:
-            api.abort(404, str(e))
+            if "Place not found" in str(e):
+                return {"error": str(e)}, 404
+            return {"error": str(e)}, 400
+
+        except Exception as e:
+            print(f"[ERROR] Unexpected error in PlaceReviewList: {e}")
+            return {"error": "Internal server error"}, 500
 
 
 @api.route('/users/<string:user_id>/reviews')
