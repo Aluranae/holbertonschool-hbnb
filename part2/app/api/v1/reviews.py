@@ -99,13 +99,29 @@ class PlaceReviewList(Resource):
 class UserReviewList(Resource):
     @api.response(200, 'List of reviews for the user retrieved successfully')
     @api.response(404, 'User not found or no reviews found')
+    @api.response(500, 'Internal server error')
     @api.marshal_list_with(review_output_model)
     def get(self, user_id):
-        """Get all reviews written by a specific user"""
+        """
+        Get all reviews written by a specific user.
+        """
         try:
+            # Récupère les reviews depuis la couche métier
             reviews = facade.get_reviews_by_user(user_id)
+
+            # Si l'utilisateur existe mais n'a posté aucun avis
             if not reviews:
                 api.abort(404, "No reviews found for this user")
+
             return reviews, 200
-        except Exception:
+
+        except ValueError as e:
+            # Cas explicite : utilisateur introuvable
+            if "User not found" in str(e):
+                api.abort(404, str(e))
+            api.abort(400, str(e))
+
+        except Exception as e:
+            # En cas d'erreur imprévue (debug possible ici)
+            print(f"[ERROR] Unexpected error in UserReviewList: {e}")
             api.abort(500, "Internal server error")

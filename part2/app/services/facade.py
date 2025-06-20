@@ -316,7 +316,12 @@ class HBnBFacade:
     def get_reviews_by_user(self, user_id):
         """
         Retourne la liste des avis rédigés par un utilisateur donné.
+        Soulève une erreur si l'utilisateur est introuvable.
         """
+        user = self.user_repo.get(user_id)
+        if not user:
+            raise ValueError("User not found")
+
         return [
             review for review in self.review_repo.get_all()
             if review.author and review.author.id == user_id
