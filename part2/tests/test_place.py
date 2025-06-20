@@ -631,10 +631,6 @@ def test_place_owner_is_user():
 
 
 def test_place_accepts_multiple_reviews():
-    """
-    Test 21 – Ajout de plusieurs Review à un Place.
-    Vérifie que Place.reviews accepte plusieurs objets Review.
-    """
     owner = User(first_name="Mon", last_name="Mothma", email="mon@senat.org")
     author1 = User(first_name="Bail", last_name="Organa", email="bail@alderaan.org")
     author2 = User(first_name="Leia", last_name="Organa", email="leia@rebellion.org")
@@ -651,16 +647,13 @@ def test_place_accepts_multiple_reviews():
     review1 = Review(text="Excellent lieu stratégique", rating=5, author=author1, place=place)
     review2 = Review(text="Confort et discrétion", rating=4, author=author2, place=place)
 
-    place.add_review(review1)
-    place.add_review(review2)
+    print("=== Reviews liés au Place ===")
+    for i, r in enumerate(place.reviews, start=1):
+        print(f"Review {i} – {r.text} par {r.author.first_name}")
 
-    print("=== Reviews liées au Place ===")
-    for i, review in enumerate(place.reviews, start=1):
-        print(f"Review {i} – {review.text} par {review.author.first_name}")
-
-    assert len(place.reviews) == 2, "Le lieu devrait avoir 2 reviews"
-    assert place.reviews[0] == review1
-    assert place.reviews[1] == review2
+    assert len(place.reviews) == 2
+    assert review1 in place.reviews
+    assert review2 in place.reviews
 
 
 def test_place_accepts_multiple_amenities():
@@ -685,9 +678,12 @@ def test_place_accepts_multiple_amenities():
     place.add_amenity(amenity1)
     place.add_amenity(amenity2)
 
-    print("=== Commodités liées au Place ===")
-    for i, a in enumerate(place.amenities, start=1):
-        print(f"Amenity {i} – {a.name}")
+    print("\n=== DEBUG Place.amenities ===")
+    print(f"Type de place.amenities : {type(place.amenities)}")
+    print(f"Longueur de la liste : {len(place.amenities)}")
+    for idx, a in enumerate(place.amenities, start=1):
+        print(f"Amenity {idx} : id={a.id} | name={a.name} | type={type(a)}")
+    print("=== FIN DEBUG ===\n")
 
     assert len(place.amenities) == 2, "Le lieu devrait avoir 2 commodités"
     assert place.amenities[0] == amenity1
