@@ -159,15 +159,17 @@ class HBnBFacade:
         self.place_repo.add(place)
         return place
 
+    """ A activer plus tard
     def delete_place(self, place_id):
-        """
+    
         Supprime un lieu par son identifiant.
         Retourne True si suppression réussie, False sinon.
-        """
+
         if self.get_place(place_id):
             self.place_repo.delete(place_id)
             return True
         return False
+    """
 
     # ==========================
     # Gestion de Amenity
@@ -224,12 +226,13 @@ class HBnBFacade:
     def create_review(self, review_data):
         """
         Crée un nouvel avis à partir d'un dictionnaire de données.
-        Exige : text, rating, author_id, place_id.
+        Exige : text, rating, user_id, place_id.
         """
         try:
-            author = self.user_repo.get(review_data["author_id"])
-            if not author:
-                raise ValueError("Author not found")
+            # ✔️ correspondance avec le champ attendu par Swagger
+            user = self.user_repo.get(review_data["user_id"])
+            if not user:
+                raise ValueError("User not found")
 
             place = self.place_repo.get(review_data["place_id"])
             if not place:
@@ -238,12 +241,14 @@ class HBnBFacade:
             review = Review(
                 text=review_data["text"],
                 rating=review_data["rating"],
-                author=author,
+                author=user,  # l’attribut dans Review reste "author"
                 place=place
             )
+
             self.review_repo.add(review)
-            place.add_review(review)  # synchronisation relationnelle
-            self.place_repo.add(place)  # re-save du lieu avec la review liée
+            place.add_review(review)      # synchronisation relationnelle
+            self.place_repo.add(place)    # re-save du lieu avec la review liée
+
             return review
 
         except (KeyError, TypeError, ValueError) as e:
@@ -307,3 +312,22 @@ class HBnBFacade:
 
         self.review_repo.delete(review_id)
         return True
+
+    def get_reviews_by_user(self, user_id):
+        """
+        Retourne la liste des avis rédigés par un utilisateur donné.
+        """
+        return [
+            review for review in self.review_repo.get_all()
+            if review.author and review.author.id == user_id
+        ]
+
+    def get_average_rating_for_place(self, place_id):
+        """
+        Calcule la moyenne des notes pour un lieu donné.
+        Retourne None si aucun avis.
+        """
+        reviews = self.get_reviews_by_place(place_id)
+        if not reviews:
+            return None
+        return sum(r.rating for r in reviews) / len(reviews)
