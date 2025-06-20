@@ -114,12 +114,15 @@ class HBnBFacade:
             place for place in self.place_repo.get_all()
             if place.owner and place.owner.id == user_id
         ]
-    
+
     def get_places_by_owner(self, owner_id):
         """
         Retourne tous les lieux appartenant à un propriétaire donné.
         """
-        return [p for p in self.place_repo.data.values() if p.owner.id == owner_id]
+        return [
+            p for p in self.place_repo.get_all()
+            if hasattr(p, "owner") and p.owner and p.owner.id == owner_id
+        ]
 
     def update_place(self, place_id, update_data):
         """
