@@ -117,30 +117,44 @@ class PlaceList(Resource):
         """
         Récupère la liste de tous les lieux enregistrés.
         """
-        # - Appeler facade.get_all_places()
         try:
+            # - Appeler facade.get_all_places()
             places = facade.get_all_places()
             if not places:
-                return {"message": 'No places found',
-                        "places": []
-                        }, 200
-            # - Transformer les objets Place en JSON (dicts)
+                return {
+                    "message": "No places found",
+                    "places": []
+                }, 200
+
+            # - Transformer chaque Place en dictionnaire JSON, avec toutes les infos utiles
+            result = []
+            for place in places:
+                result.append({
+                    "id": place.id,
+                    "title": place.title,
+                    "description": place.description,
+                    "price": place.price,
+                    "latitude": place.latitude,
+                    "longitude": place.longitude,
+                    "owner_id": place.owner.id,
+                    # - Ajouter la liste des amenities (id + name)
+                    "amenities": [
+                        {
+                            "id": amenity.id,
+                            "name": amenity.name
+                        }
+                        for amenity in place.amenities
+                    ]
+                })
+
+            # - Retourner le message + liste formatée
             return {
                 "message": "Places retrieved successfully",
-                "places": [
-                    {
-                        "id": place.id,
-                        "title": place.title,
-                        "description": place.description,
-                        "price": place.price,
-                        "latitude": place.latitude,
-                        "longitude": place.longitude,
-                        "owner_id": place.owner.id
-                    } for place in places
-                ]
-            }, 200  # - Retourner la liste + code 200
+                "places": result
+            }, 200
 
         except Exception:
+            # - En cas d'erreur serveur interne
             return {"error": "Internal server error"}, 500
 
 
@@ -207,46 +221,43 @@ class PlaceResource(Resource):
         if not data:
             return {"error": "Missing or invalid JSON data"}, 400
 
-        # - Détection de l'absence de changement
-        no_changes_detected = all(
-            getattr(place, field) == data.get(field)
-            for field in ['title', 'description', 'price', 'latitude', 'longitude']
-            if data.get(field) is not None
-        )
-        if no_changes_detected:
-            return {'error': 'No changes detected'}, 400
-
-        # - Gérer les amenities si fournis dans le JSON
+        # - Préparation au traitement des amenities
+        amenities_changed = False  # Flag de changement
         if "amenities" in data:
             amenities_ids = data.get("amenities")
 
-            # Vérifier que c'est bien une liste
             if not isinstance(amenities_ids, list):
                 return {"error": "Field 'amenities' must be a list of IDs"}, 400
 
             amenities = []
             for amenity_id in amenities_ids:
                 amenity = facade.get_amenity(amenity_id)
-
-                # Vérifier que chaque amenity existe
                 if not amenity:
                     return {"error": f"Amenity with id '{amenity_id}' not found"}, 400
-
-                # - Ajouter à la liste
                 amenities.append(amenity)
 
-            # - Comparer avec les amenities actuels
+            # - Comparaison entre les anciennes et nouvelles amenities
             existing_ids = set(a.id for a in place.amenities)
             incoming_ids = set(amenities_ids)
 
             if existing_ids != incoming_ids:
-                # - Si changements mettre à jour place.amenities
-                place.amenities = amenities
+                amenities_changed = True
+                place.amenities = amenities  # Mise à jour en mémoire (hors repo)
 
-        # - Mettre à jour les autres champs via la facade
+        # - Comparaison combinée (champs simples + amenities)
+        base_fields_unchanged = all(
+            getattr(place, field) == data.get(field)
+            for field in ['title', 'description', 'price', 'latitude', 'longitude']
+            if data.get(field) is not None
+        )
+
+        if base_fields_unchanged and not amenities_changed:
+            return {'error': 'No changes detected'}, 400
+
+        # - Mise à jour finale via la facade
         try:
             facade.update_place(place_id, data)
-            updated_place = facade.get_place(place_id)  # Get updated place
+            updated_place = facade.get_place(place_id)  # Rafraîchir les données
 
             return {
                 'id': updated_place.id,
@@ -265,5 +276,5 @@ class PlaceResource(Resource):
         except (ValueError, TypeError) as e:
             error_msg = str(e)
             if "Title already used" in error_msg:
-                return {'error': error_msg}, 409  # Spécial conflict
-            return {'error': error_msg}, 400  # Autres cas : Bad Request
+                return {'error': error_msg}, 409
+            return {'error': error_msg}, 400
