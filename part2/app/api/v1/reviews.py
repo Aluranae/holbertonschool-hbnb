@@ -111,17 +111,17 @@ class UserReviewList(Resource):
 
             # Si l'utilisateur existe mais n'a posté aucun avis
             if not reviews:
-                api.abort(404, "No reviews found for this user")
+                return {"error": "No reviews found for this user"}, 404
 
             return reviews, 200
 
         except ValueError as e:
             # Cas explicite : utilisateur introuvable
             if "User not found" in str(e):
-                api.abort(404, str(e))
-            api.abort(400, str(e))
+                return {"error": str(e)}, 404
+            return {"error": str(e)}, 400
 
         except Exception as e:
             # En cas d'erreur imprévue (debug possible ici)
             print(f"[ERROR] Unexpected error in UserReviewList: {e}")
-            api.abort(500, "Internal server error")
+            return {"error": "Internal server error"}, 500
