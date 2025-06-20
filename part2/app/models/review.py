@@ -86,6 +86,20 @@ class Review(BaseModel):
         return value
 
     # ==========================
+    # PROPRIÉTÉS PUBLIQUES
+    # ==========================
+
+    @property
+    def user_id(self):
+        """Permet d'exposer l'ID de l'auteur via 'user_id' dans l'API."""
+        return self.author.id if self.author else None
+
+    @property
+    def place_id(self):
+        """Permet d'exposer l'ID du lieu via 'place_id' dans l'API."""
+        return self.place.id if self.place else None
+
+    # ==========================
     # MÉTHODE TECHNIQUE
     # ==========================
 
