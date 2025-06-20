@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_restx import marshal
 
 api = Namespace('reviews', description='Review operations')
 
@@ -100,7 +101,6 @@ class UserReviewList(Resource):
     @api.response(200, 'List of reviews for the user retrieved successfully')
     @api.response(404, 'User not found or no reviews found')
     @api.response(500, 'Internal server error')
-    @api.marshal_list_with(review_output_model)
     def get(self, user_id):
         """
         Get all reviews written by a specific user.
@@ -113,7 +113,8 @@ class UserReviewList(Resource):
             if not reviews:
                 return {"error": "No reviews found for this user"}, 404
 
-            return reviews, 200
+            # Appliquer manuellement le modèle uniquement ici
+            return marshal(reviews, review_output_model), 200
 
         except ValueError as e:
             # Cas explicite : utilisateur introuvable
