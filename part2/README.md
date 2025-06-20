@@ -156,7 +156,7 @@ Sert à documenter
 
 ## les tâches
 
-**0 Configuration du projet et initialisation des packages**
+## 0 Configuration du projet et initialisation des packages
 
 **But :**
 - Structurer proprement le projet
@@ -275,7 +275,7 @@ update_amenity(self, amenity_id, amenity_data) : Met à jour une amenity existan
 
 **Fonctionnalités :**
 
-### ➤ `POST /api/v1/places/`  
+**➤ `POST /api/v1/places/`**
 - Crée un nouveau logement (`Place`) à partir des données JSON envoyées.  
 - Valide automatiquement les champs `price`, `latitude`, `longitude`.  
 - Lie le logement à un propriétaire (`owner_id`) et à des commodités (`amenities`).  
@@ -283,21 +283,21 @@ update_amenity(self, amenity_id, amenity_data) : Met à jour une amenity existan
 
 ---
 
-### ➤ `GET /api/v1/places/`  
+**➤ `GET /api/v1/places/`** 
 - Retourne la liste de tous les logements.  
 - Chaque logement contient les infos de base : nom, description, prix, localisation, etc.  
 - Retour : 200
 
 ---
 
-### ➤ `GET /api/v1/places/<place_id>`  
+**➤ `GET /api/v1/places/<place_id>`**  
 - Récupère les détails complets d’un logement spécifique.  
 - Inclut le propriétaire (`id`, `first_name`, `last_name`, `email`) et la liste des commodités (`id`, `name`).  
 - Retour : 200 si trouvé,  404 si l’ID n’existe pas.
 
 ---
 
-### ➤ `PUT /api/v1/places/<place_id>`  
+**➤ `PUT /api/v1/places/<place_id>`**  
 - Met à jour un logement existant avec les données JSON fournies.  
 - Valide tous les champs modifiés (`price`, `latitude`, `longitude`, etc.).  
 - Peut également mettre à jour les relations (`owner_id`, `amenities`).  
@@ -319,7 +319,7 @@ update_amenity(self, amenity_id, amenity_data) : Met à jour une amenity existan
 
 **Fonctionnalités :**
 
-### ➤ `POST /api/v1/reviews/`  
+**➤ `POST /api/v1/reviews/`**  
 - Crée un nouvel avis (`Review`) lié à un utilisateur (`user_id`) et un lieu (`place_id`).  
 - Valide les champs obligatoires : commentaire, note (par exemple de 0 à 5), `user_id`, `place_id`.  
 - Retour :  
@@ -329,7 +329,7 @@ update_amenity(self, amenity_id, amenity_data) : Met à jour une amenity existan
 
 ---
 
-### ➤ `GET /api/v1/reviews/`  
+**➤ `GET /api/v1/reviews/`**  
 - Retourne la liste complète de tous les avis.  
 - Chaque avis contient : texte, note, auteur (`user`), lieu (`place`).  
 - Retour :  
@@ -337,7 +337,7 @@ update_amenity(self, amenity_id, amenity_data) : Met à jour une amenity existan
 
 ---
 
-### ➤ `GET /api/v1/reviews/<review_id>`  
+**➤ `GET /api/v1/reviews/<review_id>`**  
 - Récupère un avis spécifique par son identifiant.  
 - Inclut les informations sur l’auteur (`user`) et le lieu (`place`).  
 - Retour :  
@@ -346,7 +346,7 @@ update_amenity(self, amenity_id, amenity_data) : Met à jour une amenity existan
 
 ---
 
-### ➤ `PUT /api/v1/reviews/<review_id>`  
+**➤ `PUT /api/v1/reviews/<review_id>`** 
 - Met à jour un avis existant (texte, note, etc.).  
 - Valide les données modifiées.  
 - Retour :  
@@ -356,7 +356,7 @@ update_amenity(self, amenity_id, amenity_data) : Met à jour une amenity existan
 
 ---
 
-### ➤ `DELETE /api/v1/reviews/<review_id>`  
+**➤ `DELETE /api/v1/reviews/<review_id>`**  
 - Supprime un avis de la base de données.  
 - Retour :  
   - `204 No Content` en cas de succès  
