@@ -12,6 +12,7 @@ HBnBFacade.
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from app.services import facade  # Accès à la couche métier
+from app.api.v1.reviews import review_model
 
 # ===================================================
 # Définition du Namespace pour les opérations Place
@@ -46,7 +47,8 @@ place_model = api.model('Place', {
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
+    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's"),
+    'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
 })
 
 
