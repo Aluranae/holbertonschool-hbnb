@@ -232,11 +232,14 @@ class HBnBFacade:
     # Gestion des commodités (Amenity)
     def create_amenity(self, amenity_data):
         """
-        Crée une nouvelle commodité.
+        Crée une nouvelle commodité. Gère les erreurs de validation.
         """
-        amenity = Amenity(**amenity_data)
-        self.amenity_repo.add(amenity)
-        return amenity
+        try:
+            amenity = Amenity(**amenity_data)
+            self.amenity_repo.add(amenity)
+            return amenity
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Invalid amenity data: {e}")
 
     def get_amenity(self, amenity_id):
         """
