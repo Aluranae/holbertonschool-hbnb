@@ -229,7 +229,7 @@ class HBnBFacade:
         Exige : text, rating, user_id, place_id.
         """
         try:
-            # ✔️ correspondance avec le champ attendu par Swagger
+            # correspondance avec le champ attendu par Swagger
             user = self.user_repo.get(review_data["user_id"])
             if not user:
                 raise ValueError("User not found")
