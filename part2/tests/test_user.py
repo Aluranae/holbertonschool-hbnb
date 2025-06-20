@@ -302,10 +302,6 @@ def test_user_place_relationship():
 
     assert place1.owner == user
     assert place2.owner == user
-
-    user.places.append(place1)
-    user.places.append(place2)
-
     assert len(user.places) == 2
     assert place1 in user.places
     assert place2 in user.places
