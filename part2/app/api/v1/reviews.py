@@ -88,13 +88,25 @@ class ReviewResource(Resource):
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
+    @api.response(500, 'Internal server error')
     def delete(self, review_id):
-        """Delete a review"""
+        """
+        Delete a review by its ID.
+        """
         try:
             facade.delete_review(review_id)
-            return {'message': 'Review deleted successfully'}, 200
-        except ValueError:
-            api.abort(404, 'Review not found')
+            return {"message": "Review deleted successfully"}, 200
+
+        except ValueError as e:
+            # Renvoie un message propre sans api.abort
+            if "not found" in str(e).lower():
+                return {"error": str(e)}, 404
+            return {"error": str(e)}, 400
+
+        except Exception as e:
+            # Fallback en cas de bug inattendu
+            print(f"[ERROR] DELETE /reviews/{review_id}: {e}")
+            return {"error": "Internal server error"}, 500
 
 
 @api.route('/places/<place_id>/reviews')

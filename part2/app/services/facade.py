@@ -176,7 +176,6 @@ class HBnBFacade:
     # ==========================
 
     # Gestion des commodités (Amenity)
-    # Gestion des commodités (Amenity)
     def create_amenity(self, amenity_data):
         """
         Crée une nouvelle commodité.
@@ -307,10 +306,11 @@ class HBnBFacade:
         """
         Supprime un avis par son identifiant.
         Met aussi à jour la liste des reviews dans l’objet Place lié.
+        Soulève une ValueError si la review est introuvable.
         """
         review = self.get_review(review_id)
         if not review:
-            return False
+            raise ValueError("Review not found")
 
         # Nettoyage de la relation dans le Place concerné
         place = review.place
@@ -319,7 +319,6 @@ class HBnBFacade:
             self.place_repo.add(place)
 
         self.review_repo.delete(review_id)
-        return True
 
     def get_reviews_by_user(self, user_id):
         """
