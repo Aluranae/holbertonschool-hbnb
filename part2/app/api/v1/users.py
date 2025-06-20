@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask import request
 
 api = Namespace('users', description='User operations')
 
@@ -45,10 +46,44 @@ class UserList(Resource):
         """List all users"""
         return facade.get_all_users(), 200
 
+
+@api.route('/search')
+class UserSearch(Resource):
+    @api.doc(params={'email': 'Email address of the user'})
+    @api.marshal_with(user_output_model)
+    @api.response(200, 'User found')
+    @api.response(400, 'Missing email query parameter')
+    @api.response(404, 'User not found')
+    def get(self):
+        """Search a user by email"""
+        email = request.args.get('email')
+        if not email:
+            return {'error': "Missing 'email' query parameter"}, 400
+
+        user = facade.get_user_by_email(email)
+        if not user:
+            return {'error': "User not found"}, 404
+
+        return user, 200
+
+
 @api.route('/<user_id>')
 class UserResource(Resource):
+    @api.marshal_with(user_output_model)
+    @api.response(200, 'User retrieved')
+    @api.response(404, 'User not found')
+    def get(self, user_id):
+        """Get a user by ID"""
+        user = facade.get_user(user_id)
+        if not user:
+            api.abort(404, "User not found")
+        return user, 200
+
     @api.expect(user_input_model, validate=False)
     @api.marshal_with(user_output_model)
+    @api.response(200, 'User successfully updated')
+    @api.response(400, 'Invalid input data')
+    @api.response(404, 'User not found')
     def put(self, user_id):
         """Update a user"""
         user = facade.get_user(user_id)

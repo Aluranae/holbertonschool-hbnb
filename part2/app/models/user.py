@@ -77,6 +77,25 @@ class User(BaseModel):
             raise ValueError("Invalid email format")
         return value
 
+    def update(self, data):
+        """
+        Redéfinit la méthode update spécifiquement pour User.
+        Applique les règles de validation métier (notamment sur l'email).
+        """
+        for key, value in data.items():
+            if key == "email":
+                self.email = self.validate_email(value)
+            elif key == "first_name":
+                self.first_name = self.validate_name(value, "First name")
+            elif key == "last_name":
+                self.last_name = self.validate_name(value, "Last name")
+            elif key == "is_admin":
+                self.is_admin = bool(value)
+            elif hasattr(self, key):
+                setattr(self, key, value)
+
+        self.save()
+
     def __repr__(self):
         """
         Représentation technique de l'utilisateur, utile pour le debug.

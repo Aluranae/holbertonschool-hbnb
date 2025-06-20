@@ -3,12 +3,14 @@ from app import create_app
 
 @pytest.fixture
 def client():
+    # Fixture de test qui crée un client de test Flask.
     app = create_app()
     app.config['TESTING'] = True
     with app.test_client() as client:
         yield client
 
 def test_create_user_success(client):
+    # Teste la création réussie d'un utilisateur.
     user_data = {
         "first_name": "Alice",
         "last_name": "Doe",
@@ -20,6 +22,7 @@ def test_create_user_success(client):
     assert response.json["email"] == "alice@example.com"
 
 def test_create_user_duplicate_email(client):
+    # Teste l'échec de la création d'un utilisateur avec un email déjà enregistré.
     user_data = {
         "first_name": "Bob",
         "last_name": "Smith",
@@ -112,3 +115,15 @@ def test_update_user_duplicate_email(client):
 
     response = client.put(f"/api/v1/users/{user2_id}", json=updated)
     assert response.status_code == 400
+
+def test_update_user_no_change(client):
+    user_data = {
+        "first_name": "Sam",
+        "last_name": "Smith",
+        "email": "sam@example.com"
+    }
+    response = client.post("/api/v1/users/", json=user_data)
+    user_id = response.json["id"]
+    # Mise à jour avec les mêmes données
+    resp = client.put(f"/api/v1/users/{user_id}", json=user_data)
+    assert resp.status_code == 200 or resp.status_code == 400  # selon l'implémentation

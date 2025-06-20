@@ -71,8 +71,8 @@ class ReviewResource(Resource):
             if not updated_review:
                 return {"error": "Review not found"}, 404
 
-            # Retourne l'objet mis à jour sous forme de dict propre
-            return updated_review.to_dict(), 200
+            # Retourne directement le dict
+            return updated_review, 200
 
         except ValueError as e:
             # Cas explicite : champ manquant, mauvais ID, etc.
