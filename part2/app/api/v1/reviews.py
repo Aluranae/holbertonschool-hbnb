@@ -60,16 +60,31 @@ class ReviewResource(Resource):
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
+    @api.response(500, 'Internal server error')
     def put(self, review_id):
-        """Update a review's information"""
+        """
+        Update a review's information by its ID.
+        """
         try:
-            updated = facade.update_review(review_id, api.payload)
-            return updated, 200
+            updated_review = facade.update_review(review_id, api.payload)
+
+            if not updated_review:
+                return {"error": "Review not found"}, 404
+
+            # Retourne l'objet mis à jour sous forme de dict propre
+            return updated_review.to_dict(), 200
+
         except ValueError as e:
+            # Cas explicite : champ manquant, mauvais ID, etc.
             msg = str(e)
-            if msg.endswith('not found'):
-                api.abort(404, msg)
-            api.abort(400, msg)
+            if "not found" in msg.lower():
+                return {"error": msg}, 404
+            return {"error": msg}, 400
+
+        except Exception as e:
+            # Cas inattendu (ex: problème interne)
+            print(f"[ERROR] PUT /reviews/{review_id}: {e}")
+            return {"error": "Internal server error"}, 500
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
