@@ -274,3 +274,110 @@ update_amenity(self, amenity_id, amenity_data) : Met à jour une amenity existan
 - Assurer que les clients peuvent créer, lire et mettre à jour des places facilement et sans erreur.
 
 **Fonctionnalités :**
+
+### ➤ `POST /api/v1/places/`  
+- Crée un nouveau logement (`Place`) à partir des données JSON envoyées.  
+- Valide automatiquement les champs `price`, `latitude`, `longitude`.  
+- Lie le logement à un propriétaire (`owner_id`) et à des commodités (`amenities`).  
+- Retour : 201 (succès), 400 (erreur de validation).
+
+---
+
+### ➤ `GET /api/v1/places/`  
+- Retourne la liste de tous les logements.  
+- Chaque logement contient les infos de base : nom, description, prix, localisation, etc.  
+- Retour : 200
+
+---
+
+### ➤ `GET /api/v1/places/<place_id>`  
+- Récupère les détails complets d’un logement spécifique.  
+- Inclut le propriétaire (`id`, `first_name`, `last_name`, `email`) et la liste des commodités (`id`, `name`).  
+- Retour : 200 si trouvé,  404 si l’ID n’existe pas.
+
+---
+
+### ➤ `PUT /api/v1/places/<place_id>`  
+- Met à jour un logement existant avec les données JSON fournies.  
+- Valide tous les champs modifiés (`price`, `latitude`, `longitude`, etc.).  
+- Peut également mettre à jour les relations (`owner_id`, `amenities`).  
+- Retour : 200 (succès),  400 (erreur de validation),  404 (place non trouvée).
+
+---
+## 5 Implémentation des endpoints pour la gestion des avis 
+
+**But :**
+- Mettre en place les endpoints API pour gérer les avis (reviews) dans une application, avec toutes les opérations :
+
+- Créer un avis (POST)
+
+- Lire un ou plusieurs avis (GET)
+
+- Modifier un avis (PUT)
+
+- Supprimer un avis (DELETE)
+
+**Fonctionnalités :**
+
+### ➤ `POST /api/v1/reviews/`  
+- Crée un nouvel avis (`Review`) lié à un utilisateur (`user_id`) et un lieu (`place_id`).  
+- Valide les champs obligatoires : commentaire, note (par exemple de 0 à 5), `user_id`, `place_id`.  
+- Retour :  
+  - `201 Created` en cas de succès  
+  - `400 Bad Request` si données invalides  
+  - `404 Not Found` si utilisateur ou lieu inexistant
+
+---
+
+### ➤ `GET /api/v1/reviews/`  
+- Retourne la liste complète de tous les avis.  
+- Chaque avis contient : texte, note, auteur (`user`), lieu (`place`).  
+- Retour :  
+  - `200 OK`
+
+---
+
+### ➤ `GET /api/v1/reviews/<review_id>`  
+- Récupère un avis spécifique par son identifiant.  
+- Inclut les informations sur l’auteur (`user`) et le lieu (`place`).  
+- Retour :  
+  - `200 OK` si trouvé  
+  - `404 Not Found` si avis inexistant
+
+---
+
+### ➤ `PUT /api/v1/reviews/<review_id>`  
+- Met à jour un avis existant (texte, note, etc.).  
+- Valide les données modifiées.  
+- Retour :  
+  - `200 OK` en cas de succès  
+  - `400 Bad Request` si validation échouée  
+  - `404 Not Found` si avis non trouvé
+
+---
+
+### ➤ `DELETE /api/v1/reviews/<review_id>`  
+- Supprime un avis de la base de données.  
+- Retour :  
+  - `204 No Content` en cas de succès  
+  - `404 Not Found` si avis inexistant
+
+---
+## 6 Implémentation des tests et validation des points de terminaison
+
+**But :**
+- Créer et exécuter des tests pour les endpoints développés.
+
+- Implémenter une validation des données côté logique métier.
+
+- Vérifier que chaque endpoint respecte les formats d’entrée/sortie, codes HTTP et règles de validation.
+
+- Documenter les résultats des tests (tests réussis et échoués).
+
+**Tests effectués :**
+
+---
+## Instructions de lancement et d’utilisation de l’API :
+
+**Pré-requis**
+- Python 3.8+ installé sur ta machine
