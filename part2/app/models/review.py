@@ -126,7 +126,8 @@ class Review(BaseModel):
 
     def to_dict(self):
         """
-        Sérialise l'objet Review sous forme de dictionnaire utilisable par Flask/JSON.
+        Sérialise l'objet Review sous forme de dictionnaire utilisable par
+        Flask/JSON.
         """
         return {
             "id": self.id,
