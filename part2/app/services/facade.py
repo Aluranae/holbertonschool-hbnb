@@ -174,17 +174,14 @@ class HBnBFacade:
     # ==========================
 
     # Gestion des commodités (Amenity)
+    # Gestion des commodités (Amenity)
     def create_amenity(self, amenity_data):
         """
-        Crée une nouvelle commodité à partir d'un dictionnaire de données.
-        Exige : name (obligatoire).
+        Crée une nouvelle commodité.
         """
-        try:
-            amenity = Amenity(name=amenity_data["name"])
-            self.amenity_repo.add(amenity)
-            return amenity
-        except (KeyError, TypeError, ValueError) as e:
-            raise ValueError(f"Invalid amenity data: {e}")
+        amenity = Amenity(**amenity_data)
+        self.amenity_repo.add(amenity)
+        return amenity
 
     def get_amenity(self, amenity_id):
         """
@@ -200,29 +197,24 @@ class HBnBFacade:
 
     def update_amenity(self, amenity_id, update_data):
         """
-        Met à jour le nom d'une commodité existante.
-        Exige une clé 'name' dans update_data.
+        Met à jour une commodité existante.
+
+        Soulève une erreur si l'amenity n'existe pas.
         """
+        # - Récupération de l'amenity ciblée
         amenity = self.get_amenity(amenity_id)
         if not amenity:
+            # - Déclenchement d'une erreur claire si l'ID est inconnu
             raise ValueError(f"Amenity with ID {amenity_id} not found")
 
-        if "name" not in update_data:
-            raise ValueError("Missing 'name' in update data")
+        # - Mise à jour des champs
+        for key, value in update_data.items():
+            setattr(amenity, key, value)
 
-        amenity.name = update_data["name"]  # setter avec validation intégrée
-        self.amenity_repo.add(amenity)
+        # - Mise à jour dans le repo
+        self.amenity_repo.update(amenity_id, update_data)
+
         return amenity
-
-    def delete_amenity(self, amenity_id):
-        """
-        Supprime une commodité par son identifiant.
-        Retourne True si suppression réussie, False sinon.
-        """
-        if self.get_amenity(amenity_id):
-            self.amenity_repo.delete(amenity_id)
-            return True
-        return False
 
     # ==========================
     # Gestion de Review
