@@ -289,6 +289,7 @@ class HBnBFacade:
         if not review:
             raise ValueError(f"Review with ID {review_id} not found")
 
+        # Mise à jour conditionnelle
         if "text" in update_data:
             review.text = review.validate_text(update_data["text"], "Text")
 
@@ -296,7 +297,10 @@ class HBnBFacade:
             review.rating = review.validate_rating(update_data["rating"],
                                                    "Rating")
 
+        # Sauvegarde dans le repo
         self.review_repo.add(review)
+
+        # Retourne l'objet Review mis à jour (utilisé dans .to_dict() côté API)
         return review
 
     def delete_review(self, review_id):
