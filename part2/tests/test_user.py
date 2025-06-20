@@ -302,6 +302,13 @@ def test_user_place_relationship():
 
     assert place1.owner == user
     assert place2.owner == user
+<<<<<<< HEAD
+=======
+
+    user.places.append(place1)
+    user.places.append(place2)
+
+>>>>>>> eb599ce (Add comprehensive tests for Review and User models)
     assert len(user.places) == 2
     assert place1 in user.places
     assert place2 in user.places
