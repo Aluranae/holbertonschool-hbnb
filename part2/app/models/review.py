@@ -123,3 +123,17 @@ class Review(BaseModel):
             f"[Review] {self.author.first_name} {self.author.last_name} "
             f"sur {self.place.title} : {self.rating}⭐ - \"{self.text}\""
         )
+
+    def to_dict(self):
+        """
+        Sérialise l'objet Review sous forme de dictionnaire utilisable par Flask/JSON.
+        """
+        return {
+            "id": self.id,
+            "text": self.text,
+            "rating": self.rating,
+            "user_id": self.user_id,
+            "place_id": self.place_id,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat()
+        }
