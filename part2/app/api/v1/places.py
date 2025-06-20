@@ -38,16 +38,6 @@ user_model = api.model('PlaceUser', {
 })
 
 # ===================================================
-# Définition du modèle Review (utilisé dans Place)
-# ===================================================
-review_model = api.model('PlaceReview', {
-    'id': fields.String(description='Review ID'),
-    'user_id': fields.String(description='ID of the reviewer'),
-    'text': fields.String(description='Review text'),
-    'rating': fields.Integer(description='Rating')
-})
-
-# ===================================================
 # Définition du modèle Place (reçu en entrée POST/PUT)
 # ===================================================
 place_model = api.model('Place', {
