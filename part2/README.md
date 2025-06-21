@@ -515,13 +515,13 @@ Amenity not found : 404 = check
 
 ```
 <p align="center">
-  <img src="images/Create_place_swagger_201" width="300" />
-  <img src="images/Swagger_try_500" width="300" />
+  <img src="images/Create_place_swagger_201.png" width="300" />
+  <img src="images/Swagger_try_500.png" width="300" />
 </p>
 
 <p align="center">
   <img src="images/tests_amenity.png" width="300" />
-  <img src="images/tests_user" width="300" />
+  <img src="images/tests_user.png" width="300" />
 </p>
 
 ---
