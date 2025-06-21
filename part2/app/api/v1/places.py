@@ -120,7 +120,6 @@ class PlaceList(Resource):
         Récupère la liste de tous les lieux enregistrés.
         """
         try:
-            # - Appeler facade.get_all_places()
             places = facade.get_all_places()
             if not places:
                 return {
@@ -128,7 +127,6 @@ class PlaceList(Resource):
                     "places": []
                 }, 200
 
-            # - Transformer chaque Place en dictionnaire JSON, avec toutes les infos utiles
             result = []
             for place in places:
                 result.append({
@@ -138,26 +136,166 @@ class PlaceList(Resource):
                     "price": place.price,
                     "latitude": place.latitude,
                     "longitude": place.longitude,
-                    "owner_id": place.owner.id,
-                    # - Ajouter la liste des amenities (id + name)
+                    "owner": {
+                        "id": place.owner.id,
+                        "first_name": place.owner.first_name,
+                        "last_name": place.owner.last_name,
+                        "email": place.owner.email
+                    },
                     "amenities": [
                         {
                             "id": amenity.id,
                             "name": amenity.name
                         }
                         for amenity in place.amenities
+                    ],
+                    "reviews": [
+                        {
+                            "id": review.id,
+                            "text": review.text,
+                            "rating": review.rating,
+                            "user": {
+                                "id": review.author.id,
+                                "first_name": review.author.first_name,
+                                "last_name": review.author.last_name,
+                                "email": review.author.email
+                            }
+                        }
+                        for review in place.reviews
                     ]
                 })
 
-            # - Retourner le message + liste formatée
             return {
                 "message": "Places retrieved successfully",
                 "places": result
             }, 200
 
         except Exception:
-            # - En cas d'erreur serveur interne
             return {"error": "Internal server error"}, 500
+
+
+# ===================================================
+# /api/v1/places/search
+# Ressource pour rechercher un lieu par son titre exact
+# ===================================================
+@api.route('/search')
+class PlaceSearch(Resource):
+    @api.doc(params={'title': 'Exact title of the place to search'})
+    @api.response(200, 'Place found')
+    @api.response(400, 'Missing title parameter')
+    @api.response(404, 'Place not found')
+    def get(self):
+        """
+        Recherche un lieu par son titre exact (sensible à la casse).
+        """
+        from flask import request
+
+        title = request.args.get('title')
+        if not title:
+            return {"error": "Missing 'title' query parameter"}, 400
+
+        place = facade.get_place_by_title(title)
+        if not place:
+            return {"error": "Place not found"}, 404
+
+        return {
+            "id": place.id,
+            "title": place.title,
+            "description": place.description,
+            "price": place.price,
+            "latitude": place.latitude,
+            "longitude": place.longitude,
+            "owner": {
+                "id": place.owner.id,
+                "first_name": place.owner.first_name,
+                "last_name": place.owner.last_name,
+                "email": place.owner.email
+            },
+            "amenities": [
+                {
+                    "id": amenity.id,
+                    "name": amenity.name
+                } for amenity in place.amenities
+            ],
+            "reviews": [
+                {
+                    "id": review.id,
+                    "text": review.text,
+                    "rating": review.rating,
+                    "user": {
+                        "id": review.author.id,
+                        "first_name": review.author.first_name,
+                        "last_name": review.author.last_name,
+                        "email": review.author.email
+                    }
+                } for review in place.reviews
+            ]
+        }, 200
+
+
+# ===================================================
+# /api/v1/places/user/<user_id>
+# Ressource pour récupérer tous les lieux d’un utilisateur donné
+# ===================================================
+@api.route('/user/<user_id>')
+class PlacesByUser(Resource):
+    @api.response(200, 'Places retrieved successfully for the user')
+    @api.response(404, 'User not found or has no places')
+    def get(self, user_id):
+        """
+        Récupère tous les lieux associés à un utilisateur (propriétaire) donné.
+        """
+        try:
+            places = facade.get_places_by_user(user_id)
+            if not places:
+                return {"error": "No places found for this user"}, 404
+
+            result = []
+            for place in places:
+                result.append({
+                    "id": place.id,
+                    "title": place.title,
+                    "description": place.description,
+                    "price": place.price,
+                    "latitude": place.latitude,
+                    "longitude": place.longitude,
+                    "owner": {
+                        "id": place.owner.id,
+                        "first_name": place.owner.first_name,
+                        "last_name": place.owner.last_name,
+                        "email": place.owner.email
+                    },
+                    "amenities": [
+                        {
+                            "id": amenity.id,
+                            "name": amenity.name
+                        }
+                        for amenity in place.amenities
+                    ],
+                    "reviews": [
+                        {
+                            "id": review.id,
+                            "text": review.text,
+                            "rating": review.rating,
+                            "user": {
+                                "id": review.author.id,
+                                "first_name": review.author.first_name,
+                                "last_name": review.author.last_name,
+                                "email": review.author.email
+                            }
+                        }
+                        for review in place.reviews
+                    ]
+                })
+
+            return {
+                "message": "Places retrieved successfully for this user",
+                "places": result
+            }, 200
+
+        except Exception:
+            return {"error": "Internal server error"}, 500
+
 
 
 # ===================================================
@@ -197,6 +335,19 @@ class PlaceResource(Resource):
                         "id": amenity.id,
                         "name": amenity.name
                     } for amenity in place.amenities
+                ],
+                "reviews": [
+                    {
+                        "id": review.id,
+                        "text": review.text,
+                        "rating": review.rating,
+                        "user": {
+                            "id": review.author.id,
+                            "first_name": review.author.first_name,
+                            "last_name": review.author.last_name,
+                            "email": review.author.email
+                        }
+                    } for review in place.reviews
                 ]
             }, 200
 
