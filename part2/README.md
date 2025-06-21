@@ -515,7 +515,7 @@ Amenity not found : 404 = check
 
 ```
 ---
-## Instructions de lancement et d’utilisation de l’API :
+## Instructions de lancement de l’API :
 **Lancer depuis le terminal :**
 ```c
 python3 part2/run.py
