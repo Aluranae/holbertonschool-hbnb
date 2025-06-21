@@ -375,9 +375,159 @@ update_amenity(self, amenity_id, amenity_data) : Met à jour une amenity existan
 - Documenter les résultats des tests (tests réussis et échoués).
 
 **Tests effectués :**
+```c
+Users Swagger/Postman Tests:
+	POST
+Creation : 201 = check
+Invalid input data : 400 = check
+Email already Registered: 400 = check
 
+	GET_user_by_id
+User retrieved successfully : 200 = check
+User not found : 404 = check
+
+	GET_user_by_email
+User retrieved successfully : 200 = check
+User not found : 404 = check
+
+	GET_all_users
+User retrieved successfully : 200 = check
+
+	PUT
+User updated successfully : 200 = check
+Invalid input data : 400 = check
+User not found : 404 = check
+-------------------------------------------------------------------------
+
+Places Swagger/Postman Tests:
+	POST
+
+Creation : 201 = check
+Invalid input data : 400 = check
+Owner Not found : 404 = check
+Conflict: Title already used by this owner : 409 = check
+
+	GET
+	
+List of places retrieved successfully : 200 = check
+
+	GET by ID
+	
+Place details retrieved successfully : 200 = check
+Place not found : 404 = check
+
+	PUT
+Place updated successfully : 200 = check
+Invalid input data : 400 = check
+Place not found : 404 = check
+Conflict: Title already used by this owner : 409 = check
+
+-------------------------------------------------------------------------
+
+Amenities Swagger/Postman tests:
+
+	POST	
+Amenity successfully created : 201 = check
+	
+Invalid input data : 400 = check
+
+	GET
+
+List of amenities retrieved successfully : 200 = check
+
+	GET by ID
+
+Amenity details retrieved successfully : 200 = check
+
+Amenity not found : 404 = check
+
+
+	PUT
+Amenity updated successfully : 200 = check
+
+Invalid input data : 400 = check
+
+Amenity not found : 404 = check
+
+-------------------------------------------------------------------------
+
+Users + Places + Amenities Tests:
+
+	POST User + POST AMENITIES + POST PLACE (avec amenties)
+Creation : 201 = check
+
+	PUT PLACE (en modifiant les amenities)
+Place updated successfully : 200 = check
+
+	GET PLACE (pour voir si amenities apparaissent)
+Place details retrieved successfully : 200 = check
+
+	PUT AMENITIES
+Amenity updated successfully : 200 = check
+Invalid input data : 400 = check
+Amenity not found : 404 = check
+
+	GET AMENITIES
+Amenity details retrieved successfully : 200 = check
+
+	GET AMENITIES by ID
+Amenity details retrieved successfully : 200 = check
+Amenity not found : 404 = check
+
+-------------------------------------------------------------------------
+Users + Places + Amenities + Reviews Tests:
+
+POST User + POST AMENITIES + POST PLACE + POST REVIEWS (avec amenties)
+Creation : 201 = check
+
+	PUT PLACE (en modifiant les amenities)
+Place updated successfully : 200 = check
+
+	GET PLACE (pour voir si amenities apparaissent)
+Place details retrieved successfully : 200 = check
+
+	GET REVIEWS
+Amenity details retrieved successfully : 200 = check
+
+	GET REVIEWS by Place
+Amenity details retrieved successfully : 200 = check
+Amenity not found : 404 = check
+
+	GET REVIEWS by specific user
+Amenity details retrieved successfully : 200 = check
+Amenity not found : 404 = check
+
+	GET REVIEWS by ID
+Amenity details retrieved successfully : 200 = check
+Amenity not found : 404 = check
+
+	PUT REVIEWS
+Amenity updated successfully : 200 = check
+Invalid input data : 400 = check
+Amenity not found : 404 = check
+
+	DELETE REVIEWS by ID
+Amenity details retrieved successfully : 200 = check
+Amenity not found : 404 = check
+
+-------------------------------------------------------------------------
+
+
+```
 ---
 ## Instructions de lancement et d’utilisation de l’API :
+**Lancer depuis le terminal :**
+```c
+python3 part2/run.py
+```
 
-**Pré-requis**
-- Python 3.8+ installé sur ta machine
+**Tu devrais voir :**
+```c
+ * Running on http://0.0.0.0:5000/
+```
+
+## Authors
+
+[Benjamin Estrada](https://github.com/Aluranae)  
+[Nina](https://github.com/ninaglss15)  
+[Mylliah](https://github.com/Mylliah)
