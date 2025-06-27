@@ -49,11 +49,7 @@ The goal is to bring the previously documented architecture to life by:
 - Returning enriched serialized data (e.g., owner info, related amenities).
 - Testing and validating all endpoints manually via Postman or cURL.
 
-> ⚠️ Authentication, role management, and persistence in a real database will be introduced in later phases.
-
-## Outcome
-
-By the end of this part, you will have implemented a functional, testable, and modular API structure. This forms a robust base for future extensions and prepares the system for integration with authentication, access control, and persistent storage.
+⚠️ Authentication, role management, and persistence in a real database will be introduced in later phases. For now, this project establishes a solid, testable API and a robust logic layer — setting the stage for full application deployment.
 
 [BL and API](https://github.com/Aluranae/holbertonschool-hbnb/tree/main/part2)
 
