@@ -59,7 +59,22 @@ The goal is to bring the previously documented architecture to life by:
 
 # HBnB - Auth and DB
 
+This third phase of the HBnB project extends the backend by introducing **user authentication**, **role-based authorization**, and **persistent database integration**. It transforms the prototype into a production-ready system by securing API access and replacing in-memory storage with a real database.
 
+## Objectives
+
+The main objectives include:
+
+- Implementing **JWT-based authentication** to manage user sessions securely.
+- Enforcing **role-based access control**, differentiating regular users from administrators.
+- Replacing the in-memory repository with **SQLite** for development and preparing for **MySQL** deployment in production.
+- Refactoring all CRUD operations to persist data using **SQLAlchemy ORM**.
+- Designing the relational schema and its relationships (users, places, reviews, amenities) with **Mermaid.js ER diagrams**.
+- Ensuring **data validation, consistency, and constraint enforcement** in the database models.
+
+## Outcome
+
+This subproject delivers a secure, scalable backend ready for real-world deployment. It brings essential industry practices to the HBnB clone, such as authentication, persistent storage, and structured data modeling — ensuring the system is both robust and maintainable.
 
 [Auth & DB](https://github.com/Aluranae/holbertonschool-hbnb/tree/main/part3)
 
