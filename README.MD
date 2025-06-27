@@ -36,6 +36,25 @@ This modeling phase ensures consistency, modularity, and clarity before the actu
 
 # HBnB - BL and API
 
+This subproject marks the beginning of the actual implementation of the HBnB application. Building on the UML design phase, it focuses on coding the **Business Logic** and **API** layers using **Python**, **Flask**, and **flask-restx**.
+
+## Objective
+
+The goal is to bring the previously documented architecture to life by:
+
+- Structuring the project into clean, modular packages.
+- Defining the core business entities (`User`, `Place`, `Review`, `Amenity`) and their relationships.
+- Implementing the **facade pattern** to coordinate logic across services.
+- Developing **RESTful API endpoints** to support full CRUD operations.
+- Returning enriched serialized data (e.g., owner info, related amenities).
+- Testing and validating all endpoints manually via Postman or cURL.
+
+> ⚠️ Authentication, role management, and persistence in a real database will be introduced in later phases.
+
+## Outcome
+
+By the end of this part, you will have implemented a functional, testable, and modular API structure. This forms a robust base for future extensions and prepares the system for integration with authentication, access control, and persistent storage.
+
 [BL and API](https://github.com/Aluranae/holbertonschool-hbnb/tree/main/part2)
 
 <p align="right"><a href="#navigation">↑ Back to Navigation</a></p>
