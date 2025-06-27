@@ -60,6 +60,7 @@ The goal is to bring the previously documented architecture to life by:
 # HBnB - Auth and DB
 
 
+
 [Auth & DB](https://github.com/Aluranae/holbertonschool-hbnb/tree/main/part3)
 
 <p align="right"><a href="#navigation">↑ Back to Navigation</a></p>
