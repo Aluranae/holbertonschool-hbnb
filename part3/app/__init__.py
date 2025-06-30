@@ -12,7 +12,7 @@ def create_app():
     api.add_namespace(places_ns, path='/api/v1/places')
     api.add_namespace(amenities_ns, path='/api/v1/amenities')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
-    
+
     # Placeholder pour les namespaces de l'API (les endpoints seront ajoutés plus tard)
     # Les namespaces supplémentaires pour places, reviews et amenities seront ajoutés ultérieurement
 
