@@ -30,7 +30,8 @@ class BaseModel:
     - update(data: dict) : met à jour les attributs depuis un dictionnaire
     """
 
-    __slots__ = ('_id', '_created_at', 'updated_at')  # limitation explicite des attributs
+    # limitation explicite des attributs
+    __slots__ = ('_id', '_created_at', 'updated_at')
 
     def __init__(self):
         """
