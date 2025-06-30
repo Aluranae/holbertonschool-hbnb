@@ -23,6 +23,7 @@ message_model = api.model('Message', {
     'message': fields.String(description='A response message')
 })
 
+
 @api.route('/')
 class ReviewList(Resource):
     @api.expect(review_model, validate=True)
@@ -44,6 +45,7 @@ class ReviewList(Resource):
         """Retrieve a list of all reviews"""
         reviews = facade.get_all_reviews()
         return reviews, 200
+
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):
@@ -83,6 +85,7 @@ class ReviewResource(Resource):
         except ValueError:
             api.abort(404, 'Review not found')
 
+
 @api.route('/places/<place_id>/reviews')
 class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
@@ -95,6 +98,7 @@ class PlaceReviewList(Resource):
             return reviews, 200
         except ValueError as e:
             api.abort(404, str(e))
+
 
 @api.route('/users/<string:user_id>/reviews')
 class UserReviewList(Resource):

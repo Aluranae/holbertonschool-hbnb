@@ -297,7 +297,6 @@ class PlacesByUser(Resource):
             return {"error": "Internal server error"}, 500
 
 
-
 # ===================================================
 # /api/v1/places/<place_id>
 # Ressource pour accéder ou modifier un lieu spécifique
