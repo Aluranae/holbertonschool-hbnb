@@ -2,6 +2,8 @@ from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask import request
 
+from app.models.user import User
+
 api = Namespace('users', description='User operations')
 
 # Modèle d'entrée (sans ID)
@@ -33,18 +35,18 @@ class UserList(Resource):
         """Register a new user"""
         user_data = api.payload
 
-        # Vérifie l'unicité de l'email
+        # Optionnel : vérifie l'unicité de l'email AVANT création (pour message plus rapide)
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user:
             api.abort(400, 'Email already registered')
 
+        # Optionnel : vérification simple longueur mot de passe (sinon laisser à la façade)
+        if not user_data.get('password') or len(user_data['password']) < 12:
+            return {'error': 'Password is required and must be at least 12 characters long'}, 400
+
         try:
-            # Création de l'utilisateur via la façade
+            # Création via la façade qui valide, hash et sauvegarde
             new_user = facade.create_user(user_data)
-
-            # Hash du mot de passe (lève ValueError si invalide)
-            new_user.hash_password(user_data['password'])
-
             return new_user, 201
 
         except (ValueError, TypeError) as e:

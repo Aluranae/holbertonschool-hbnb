@@ -64,6 +64,10 @@ class HBnBFacade:
                 email=user_data["email"],
                 is_admin=user_data.get("is_admin", False)
             )
+
+            # Hachage et validation du mot de passe AVANT la sauvegarde
+            user.hash_password(user_data["password"])
+
             self.user_repo.add(user)
             return user
         except (KeyError, TypeError, ValueError) as e:
