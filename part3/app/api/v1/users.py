@@ -8,12 +8,16 @@ api = Namespace('users', description='User operations')
 user_input_model = api.model('UserInput', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
-    'email': fields.String(required=True, description='Email of the user')
+    'email': fields.String(required=True, description='Email of the user'),
+    'password': fields.String(required=True, description='User password (will be hashed)')
 })
 
 # Modèle de sortie (hérite du modèle d'entrée + id)
-user_output_model = api.inherit('UserOutput', user_input_model, {
+user_output_model = api.model('UserOutput', {
     'id': fields.String(readonly=True, description='User ID'),
+    'first_name': fields.String(description='First name of the user'),
+    'last_name': fields.String(description='Last name of the user'),
+    'email': fields.String(description='Email of the user'),
     'is_admin': fields.Boolean(description='Whether the user is an admin')
 })
 
@@ -35,10 +39,15 @@ class UserList(Resource):
             api.abort(400, 'Email already registered')
 
         try:
+            # Création de l'utilisateur via la façade
             new_user = facade.create_user(user_data)
+
+            # Hash du mot de passe (lève ValueError si invalide)
+            new_user.hash_password(user_data['password'])
+
             return new_user, 201
+
         except (ValueError, TypeError) as e:
-            # Si les données sont invalides (ex : email malformé)
             api.abort(400, str(e))
 
     @api.marshal_list_with(user_output_model)
