@@ -1,0 +1,5 @@
+flask
+flask-restx
+pytest 8.4.0
+flask-bcrypt
+flask-jwt-extended
