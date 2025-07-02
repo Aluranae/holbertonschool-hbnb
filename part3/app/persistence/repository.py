@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from app.extensions import db
+from app.models.user import User
+
 
 class Repository(ABC):
     @abstractmethod
@@ -50,3 +53,24 @@ class InMemoryRepository(Repository):
 
     def get_by_attribute(self, attr_name, attr_value):
         return next((obj for obj in self._storage.values() if getattr(obj, attr_name) == attr_value), None)
+
+
+class UserRepository(SQLAlchemyRepository):
+    """
+    Repository spécifique pour les objets User.
+    Permet des requêtes personnalisées sur les utilisateurs.
+    """
+    def __init__(self):
+        super().__init__(User)
+
+    def get_by_email(self, email):
+        """
+        Récupère un utilisateur à partir de son email (unique).
+
+        Paramètres :
+        - email (str) : email de l'utilisateur
+
+        Retour :
+        - User ou None
+        """
+        return self.model.query.filter_by(email=email).first()

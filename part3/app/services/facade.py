@@ -3,11 +3,12 @@ from app.models.user import User
 from app.models.place import Place
 from app.models.amenity import Amenity
 from app.models.review import Review
+from app.persistence.repository import UserRepository
 
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo = InMemoryRepository()
+        self.user_repo = UserRepository()
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
@@ -35,10 +36,7 @@ class HBnBFacade:
         Recherche un utilisateur par adresse e-mail.
         Retourne l'objet User correspondant ou None si non trouvé.
         """
-        return next(
-            (user for user in self.user_repo.get_all() if user.email == email),
-            None
-        )
+        return self.user_repo.get_by_email(email)
 
     def get_all_users(self):
         """
@@ -49,15 +47,15 @@ class HBnBFacade:
     def create_user(self, user_data):
         """
         Crée un nouvel utilisateur à partir d'un dictionnaire de données.
-        Exige : first_name, last_name, email (is_admin est optionnel).
-        Vérifie que l'e-mail n'est pas déjà utilisé.
-        Lève une ValueError si doublon ou données invalides.
+        Exige : first_name, last_name, email, password (is_admin est optionnel).
+        Lève une ValueError si l’e-mail est déjà utilisé ou si les données sont invalides.
         """
-        # Vérifie l'unicité de l'e-mail
+        # Vérifie l’unicité de l’e-mail via le repo
         if self.get_user_by_email(user_data["email"]):
             raise ValueError("Email already registered")
 
         try:
+            # Création de l’utilisateur
             user = User(
                 first_name=user_data["first_name"],
                 last_name=user_data["last_name"],
@@ -65,26 +63,53 @@ class HBnBFacade:
                 is_admin=user_data.get("is_admin", False)
             )
 
-            # Hachage et validation du mot de passe AVANT la sauvegarde
+            # Hachage sécurisé du mot de passe
             user.hash_password(user_data["password"])
 
+            # Ajout via le repository
             self.user_repo.add(user)
             return user
+
         except (KeyError, TypeError, ValueError) as e:
             raise ValueError(f"Invalid user data: {e}")
 
     def update_user(self, user_id, update_data):
         """
         Met à jour un utilisateur existant avec les données fournies.
+        Ne met à jour que les champs fournis dans update_data.
+        Ignore les champs inexistants ou immuables (id, created_at).
+        Gère correctement le hachage du mot de passe si modifié.
         Lève une ValueError si l'utilisateur n'existe pas.
         """
-        user = self.get_user(user_id)
+        user = self.user_repo.get(user_id)
         if not user:
             raise ValueError(f"User with ID {user_id} not found")
 
-        user.update(update_data)  # méthode fournie par BaseModel
-        self.user_repo.add(user)  # réécriture dans le stockage
+        # Liste des champs modifiables
+        modifiables = {"first_name", "last_name", "email", "password", "is_admin"}
+
+        for key, value in update_data.items():
+            if key not in modifiables:
+                continue
+
+            if key in {"first_name", "last_name"}:
+                validated = user.validate_name(value, key.replace("_", " ").title())
+                setattr(user, key, validated)
+
+            elif key == "email":
+                validated = user.validate_email(value)
+                setattr(user, "email", validated)
+
+            elif key == "password":
+                user.hash_password(value)  # hachage interne
+
+            elif key == "is_admin":
+                user.is_admin = bool(value)
+
+        user.save()  # met à jour updated_at
+        self.user_repo.add(user)  # commit SQLAlchemy
         return user
+
 
     """ A activer plus tard
     def delete_user(self, user_id):

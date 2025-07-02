@@ -9,6 +9,7 @@ liés à l'identité de l'utilisateur.
 # BaseModel : classe de base commune
 # re : regex pour la vérification du mail
 import re
+from app.extensions import db
 from app.models.base import BaseModel
 from flask_bcrypt import Bcrypt  # Import nécessaire pour les méthodes de hachage
 bcrypt = Bcrypt()
@@ -28,34 +29,14 @@ class User(BaseModel):
     - email (str) : adresse e-mail (obligatoire, unique, format email standard)
     - is_admin (bool) : droits administrateur (par défaut False)
     """
+    __tablename__ = "users"
 
-    __slots__ = BaseModel.__slots__ + ('first_name', 'last_name', 'email',
-                                       'password', 'is_admin', 'places',
-                                       'reviews')
-
-    def __init__(self, first_name, last_name, email, is_admin=False):
-        """
-        Constructeur de la classe User.
-
-        Paramètres :
-        - first_name (str) :
-        prénom de l'utilisateur (obligatoire, <= 50 caractères)
-        - last_name (str) :
-        nom de l'utilisateur (obligatoire, <= 50 caractères)
-        - email (str) :
-        adresse e-mail (obligatoire, format email standard attendu)
-        - password (str) : mot de passe haché
-        - is_admin (bool, optionnel) :
-        booléen indiquant si l'utilisateur est admin (défaut : False)
-        """
-        super().__init__()
-        self.first_name = self.validate_name(first_name, "First name")
-        self.last_name = self.validate_name(last_name, "Last name")
-        self.email = self.validate_email(email)
-        self.password = None  # ← Mot de passe haché, initialisé à None
-        self.is_admin = bool(is_admin)
-        self.places = []  # ← Relation un-à-plusieurs : User → [Place]
-        self.reviews = []  # ← Relation un-à-plusieurs : User → [Review]
+    # Déclaration des colonnes SQLAlchemy
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    password = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
 
     def validate_name(self, value, field_name):
         """Valide un nom (prénom ou nom) : type str, non vide,
@@ -84,8 +65,8 @@ class User(BaseModel):
 
     def update(self, data):
         """
-        Redéfinit la méthode update spécifiquement pour User.
-        Applique les règles de validation métier (notamment sur l'email).
+        Met à jour les champs autorisés de l'utilisateur à partir d'un dictionnaire,
+        en appliquant les règles de validation métier si nécessaire.
         """
         for key, value in data.items():
             if key == "email":
