@@ -1,3 +1,8 @@
+DELETE FROM reviews;
+DELETE FROM place_amenity;
+DELETE FROM places;
+DELETE FROM users WHERE email = 'luke@force.io';
+
 -- Vérifier que l’utilisateur admin existe
 SELECT id, email, is_admin FROM users WHERE email = 'admin@hbnb.io';
 
@@ -5,7 +10,7 @@ SELECT id, email, is_admin FROM users WHERE email = 'admin@hbnb.io';
 SELECT * FROM amenities;
 
 -- Créer un utilisateur standard
-INSERT INTO users (id, first_name, last_name, email, password)
+INSERT INTO users (id, first_name, last_name, email, password, is_admin)
 VALUES (
 '31fbb9be-c2ef-4868-95c4-e5c3f2b78904',
 'Luke',
