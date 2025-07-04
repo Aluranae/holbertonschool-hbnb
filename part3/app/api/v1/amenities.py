@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
+from flask_jwt_extended import jwt_required, get_jwt
 from app.services import facade
 
 api = Namespace('amenities', description='Amenity operations')
@@ -12,11 +13,17 @@ amenity_model = api.model('Amenity', {
 
 @api.route('/')
 class AmenityList(Resource):
+    @jwt_required()
     @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Admin privileges required')
     def post(self):
         """Register a new amenity"""
+        claims = get_jwt()
+        if not claims.get('is_admin', False):
+            return {'error': 'Admin privileges required'}, 403
+
         data = request.json
         if not data or 'name' not in data or not isinstance(data['name'], str):
             api.abort(400, "Invalid input data: 'name' is required and must be a string")
@@ -42,12 +49,18 @@ class AmenityResource(Resource):
             api.abort(404, "Amenity not found")
         return {'id': amenity.id, 'name': amenity.name}, 200
 
+    @jwt_required()
     @api.expect(amenity_model)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Admin privileges required')
     def put(self, amenity_id):
         """Update an amenity's information"""
+        claims = get_jwt()
+        if not claims.get('is_admin', False):  # Vérification du privilège admin
+            return {'error': 'Admin privileges required'}, 403
+
         data = request.json
         if not data or 'name' not in data or not isinstance(data['name'], str):
             api.abort(400, "Invalid input data: 'name' is required and must be a string")

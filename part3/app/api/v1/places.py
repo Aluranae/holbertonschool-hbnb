@@ -11,6 +11,7 @@ HBnBFacade.
 
 from flask_restx import Namespace, Resource, fields
 from flask import request
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade  # Accès à la couche métier
 from app.api.v1.reviews import review_model
 
@@ -59,6 +60,7 @@ place_model = api.model('Place', {
 @api.route('/')
 class PlaceList(Resource):
 
+    @jwt_required()
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
@@ -75,18 +77,13 @@ class PlaceList(Resource):
             return {"error": "Missing or invalid JSON data"}, 400
 
         try:
+            current_user = get_jwt_identity()
+            data['owner_id'] = current_user['id']
+
             # Extraction de title et owner_id
             title = data.get("title")
-            owner_id = data.get("owner_id")
-
-            # Vérification de l'existence du propriétaire
-            owner = facade.get_user(owner_id)
-            if not owner:
-                return {"error": "Owner not found"}, 404
-
-            # Vérification de l’unicité du titre pour ce owner
             existing_place = facade.get_place_by_title(title)
-            if existing_place and existing_place.owner.id == owner_id:
+            if existing_place and existing_place.owner.id == current_user['id']:
                 return {"error": "This owner already has a place with the same" 
                         "title"}, 409
 
@@ -188,8 +185,6 @@ class PlaceSearch(Resource):
         """
         Recherche un lieu par son titre exact (sensible à la casse).
         """
-        from flask import request
-
         title = request.args.get('title')
         if not title:
             return {"error": "Missing 'title' query parameter"}, 400
@@ -297,6 +292,7 @@ class PlacesByUser(Resource):
             return {"error": "Internal server error"}, 500
 
 
+
 # ===================================================
 # /api/v1/places/<place_id>
 # Ressource pour accéder ou modifier un lieu spécifique
@@ -353,9 +349,11 @@ class PlaceResource(Resource):
         except Exception:
             return {"error": "Internal server error"}, 500
 
+    @jwt_required()
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
     @api.response(404, 'Place not found')
     @api.response(409, 'Conflict: Title already used by this owner')
     @api.response(500, 'Internal server error')
@@ -367,6 +365,13 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
+        
+        current_user = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
+        if not is_admin and str(place.owner.id) != str(current_user["id"]):
+            return {'error': 'Unauthorized action'}, 403
 
         # - Récupération et validation du JSON
         data = request.get_json()
