@@ -1,54 +1,49 @@
 """models/amenity.py
 
-Définit la classe Amenity, représentant une commodité disponible
-dans un lieu de l'application HBnB.
-Cette classe hérite de BaseModel.
+Modèle représentant une commodité dans l'application HBnB.
+Contient également la table d'association many-to-many avec Place.
 """
 
-# Import de la classe de base
+from app.extensions import db
 from app.models.base import BaseModel
+
+# Table d'association many-to-many entre Place et Amenity
+place_amenity = db.Table(
+    'place_amenity',
+    db.Column('place_id', db.String(60), db.ForeignKey('places.id'), primary_key=True),
+    db.Column('amenity_id', db.String(60), db.ForeignKey('amenities.id'), primary_key=True)
+)
 
 
 class Amenity(BaseModel):
     """
-    Classe représentant une commodité associée à un hébergement.
+    Modèle représentant une commodité associée à un hébergement.
 
     Hérite de :
     - BaseModel : fournit id, created_at, updated_at
 
-    Attributs spécifiques :
+    Attributs :
     - name (str) : nom de la commodité (obligatoire, max 50 caractères)
+    - places : relation many-to-many avec Place
     """
 
-    __slots__ = BaseModel.__slots__ + ('_name',)
+    __tablename__ = "amenities"
+
+    name = db.Column(db.String(50), nullable=False)
+
+    # 🔗 Relation vers Place (many-to-many, via table d'association)
+    places = db.relationship(
+        "Place",  # nom du modèle cible (doit être exactement le même nom que la classe Place)
+        secondary=place_amenity,
+        backref=db.backref("amenities", lazy=True),
+        lazy="subquery"
+    )
 
     def __init__(self, name):
-        """
-        Constructeur de la classe Amenity.
-
-        Paramètre :
-        - name (str) : nom de la commodité (ex: "Wi-Fi", "Parking")
-        """
         super().__init__()
-        self._name = self.validate_name(name, "Name")
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        self._name = self.validate_name(value, "Name")
-        self.touch()  # méthode héritée de BaseModel pour mettre à jour updated_at
-
-    # ==========================
-    # MÉTHODE DE VALIDATION
-    # ==========================
+        self.name = self.validate_name(name, "Name")
 
     def validate_name(self, value, field_name):
-        """
-        Valide le nom de la commodité : str non vide, max 50 caractères.
-        """
         if not isinstance(value, str):
             raise TypeError(f"{field_name} must be a string")
         value = value.strip()
@@ -58,20 +53,8 @@ class Amenity(BaseModel):
             raise ValueError(f"{field_name} must be at most 50 characters")
         return value
 
-    # ==========================
-    # MÉTHODE TECHNIQUE
-    # ==========================
-
     def __repr__(self):
-        """
-        Représentation technique de l'amenity, utile pour le debug.
-        Exemple : <Amenity 78c1... - Wi-Fi>
-        """
         return f"<Amenity {self.id}: {self.name}>"
 
     def __str__(self):
-        """
-        Affichage lisible d'une commodité.
-        Exemple : Commodité : Wi-Fi
-        """
         return f"Commodité : {self.name}"
