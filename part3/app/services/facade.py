@@ -2,6 +2,7 @@ from app.models.user import User
 from app.models.place import Place
 from app.models.amenity import Amenity
 from app.models.review import Review
+from app.extensions import db
 from app.persistence.repository import UserRepository
 from app.persistence.repository import PlaceRepository, ReviewRepository, AmenityRepository
 
@@ -55,11 +56,11 @@ class HBnBFacade:
             raise ValueError("Email already registered")
 
         try:
-            # Création de l’utilisateur
+            # Création de l’utilisateur avec validation explicite
             user = User(
-                first_name=user_data["first_name"],
-                last_name=user_data["last_name"],
-                email=user_data["email"],
+                first_name=User().validate_name(user_data["first_name"], "First name"),
+                last_name=User().validate_name(user_data["last_name"], "Last name"),
+                email=User().validate_email(user_data["email"]),
                 is_admin=user_data.get("is_admin", False)
             )
 
@@ -134,32 +135,46 @@ class HBnBFacade:
         Exige : title, description, price, latitude, longitude, owner_id.
         Optionnel : amenities (liste d'objets Amenity ou d'ID)
         """
+        # Nettoie le champ inutile transmis par Swagger (pour éviter l'erreur "unexpected keyword argument 'owner'")
+        place_data.pop('owner', None)
+        place_data.pop('reviews', None)
+        print("DEBUG - contenu final de place_data:", place_data)
+
         try:
+            # Vérifie l'existence de l'utilisateur propriétaire
             owner = self.user_repo.get(place_data["owner_id"])
             if not owner:
                 raise ValueError("Owner not found")
 
-            amenities = place_data.get("amenities", [])
+            # Sécurité : forcer amenities à être une liste
+            raw_amenities = place_data.get("amenities", [])
+            if not isinstance(raw_amenities, list):
+                raise TypeError("amenities must be a list")
 
+            # Création du lieu
             place = Place(
                 title=place_data["title"],
                 description=place_data["description"],
                 price=place_data["price"],
                 latitude=place_data["latitude"],
                 longitude=place_data["longitude"],
-                owner=owner
+                user_id=owner.id
             )
+            db.session.add(place)  # ajout à la session
 
             # Ajout des commodités si elles sont valides
-            for amenity in amenities:
+            for amenity in raw_amenities:
                 if isinstance(amenity, Amenity):
                     place.add_amenity(amenity)
-                elif isinstance(amenity, str):  # ID de l’amenity
+                elif isinstance(amenity, str):
                     a = self.amenity_repo.get(amenity)
                     if a:
-                        place.add_amenity(a)
+                        place.amenities.append(a)
+                else:
+                    raise TypeError(f"Invalid amenity type: {type(amenity)}")
 
             self.place_repo.add(place)
+            print("PLACE CRÉÉ :", place)
             return place
 
         except (KeyError, TypeError, ValueError) as e:
@@ -244,7 +259,7 @@ class HBnBFacade:
 
     """ A activer plus tard
     def delete_place(self, place_id):
-    
+
         Supprime un lieu par son identifiant.
         Retourne True si suppression réussie, False sinon.
 
@@ -328,7 +343,7 @@ class HBnBFacade:
             )
 
             self.review_repo.add(review)
-            place.add_review(review)      # synchronisation relationnelle
+            place.reviews.append(review)     # synchronisation relationnelle
             self.place_repo.add(place)    # re-save du lieu avec la review liée
 
             return review

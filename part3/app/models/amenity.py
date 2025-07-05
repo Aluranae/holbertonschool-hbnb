@@ -31,17 +31,13 @@ class Amenity(BaseModel):
 
     name = db.Column(db.String(50), nullable=False)
 
-    # 🔗 Relation vers Place (many-to-many, via table d'association)
+    # Relation vers Place (many-to-many, via table d'association)
     places = db.relationship(
         "Place",
         secondary=place_amenity,
         back_populates="amenities",
         lazy="subquery"
     )
-
-    def __init__(self, name):
-        super().__init__()
-        self.name = self.validate_name(name, "Name")
 
     def validate_name(self, value, field_name):
         if not isinstance(value, str):

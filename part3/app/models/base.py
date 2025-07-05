@@ -16,7 +16,7 @@ Rôles :
 # datetime : pour stocker des horodatages
 # db : instance SQLAlchemy (importée depuis app/extensions)
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 
@@ -39,18 +39,18 @@ class BaseModel(db.Model):
                    default=lambda: str(uuid.uuid4()))
     # created_at
     created_at = db.Column(db.DateTime,
-                           default=lambda: datetime.now(datetime.timezone.utc))
+                           default=lambda: datetime.now(timezone.utc))
     # updated_at
     updated_at = db.Column(db.DateTime,
-                           default=lambda: datetime.now(datetime.timezone.utc),
-                           onupdate=lambda: datetime.now(datetime.timezone.utc))
+                           default=lambda: datetime.now(timezone.utc),
+                           onupdate=lambda: datetime.now(timezone.utc))
 
     def save(self):
         """
         Met à jour manuellement la date de dernière modification (updated_at).
         Cette méthode peut être utilisée avant de déclencher un commit.
         """
-        self.updated_at = datetime.now(datetime.timezone.utc)
+        self.updated_at = datetime.now(timezone.utc)
 
     def update(self, data):
         """

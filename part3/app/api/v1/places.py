@@ -77,20 +77,22 @@ class PlaceList(Resource):
             return {"error": "Missing or invalid JSON data"}, 400
 
         try:
+            # Récupération de l'identité de l'utilisateur connecté
             current_user = get_jwt_identity()
-            data['owner_id'] = current_user['id']
 
-            # Extraction de title et owner_id
+            # Ajout de l'ID du propriétaire dans les données reçues
+            data['owner_id'] = current_user 
+
+            # Extraction de title et vérification de conflit avec cet owner
             title = data.get("title")
             existing_place = facade.get_place_by_title(title)
-            if existing_place and existing_place.owner.id == current_user['id']:
-                return {"error": "This owner already has a place with the same" 
-                        "title"}, 409
+            if existing_place and str(existing_place.owner.id) == str(current_user):
+                return {"error": "This owner already has a place with the same title"}, 409
 
-            # Création du lieu
+            # Création du lieu via la facade
             new_place = facade.create_place(data)
 
-            # Construction de la réponse JSON (à coder)
+            # Construction de la réponse JSON
             response = {
                 'id': new_place.id,
                 'title': new_place.title,
@@ -102,13 +104,19 @@ class PlaceList(Resource):
             }
 
             return response, 201
+
         # Gestion des erreurs de validation ou données incorrectes
-        # (champ manquant, mauvais type, etc.)
         except (ValueError, TypeError, KeyError) as e:
             return {"error": str(e)}, 400
+
         # Gestion des erreurs inattendues (ex : crash interne, bug imprévu)
-        except Exception:
-            return {"error": "Internal server error"}, 500  # Optionnel
+        except Exception as e:
+            import traceback
+            print("❌ ERREUR CRITIQUE - Exception levée lors du POST /places")
+            print("Type :", type(e).__name__)
+            print("Message :", str(e))
+            traceback.print_exc()
+            return {"error": "Internal server error"}, 500
 
     @api.response(200, 'List of places retrieved successfully')
     @api.response(500, 'Internal server error')

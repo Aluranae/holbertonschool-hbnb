@@ -47,14 +47,6 @@ class Place(BaseModel):
         lazy="subquery"
     )
 
-    def __init__(self, title, description, price, latitude=None, longitude=None):
-        super().__init__()
-        self.title = self.validate_title(title, "Title")
-        self.description = self.validate_description(description, "Description")
-        self.price = self.validate_price(price, "Price")
-        self.latitude = self.validate_latitude(latitude, "Latitude")
-        self.longitude = self.validate_longitude(longitude, "Longitude")
-
     # ========== MÉTHODES DE VALIDATION ==========
 
     def validate_title(self, value, field_name):

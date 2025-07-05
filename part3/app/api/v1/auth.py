@@ -6,7 +6,7 @@ et un exemple de route protégée par JWT (/protected).
 """
 
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from app.services.facade import HBnBFacade
 
 # Création du namespace pour l'authentification
@@ -36,11 +36,13 @@ class Login(Resource):
         if not user or not user.verify_password(credentials['password']):
             return {'error': 'Invalid credentials'}, 401
 
-        # Génération du JWT avec id et is_admin
-        access_token = create_access_token(identity={
-            'id': str(user.id),
-            'is_admin': user.is_admin
-        })
+        # Encodage avec identité str + claims admin
+        access_token = create_access_token(
+            identity=str(user.id),
+            additional_claims={
+                "is_admin": bool(user.is_admin)
+            }
+        )
 
         return {'access_token': access_token}, 200
 
@@ -52,5 +54,9 @@ class Protected(Resource):
     @api.response(401, 'Missing or invalid token')
     def get(self):
         """Un point de terminaison protégé nécessitant un JWT valide"""
-        user = get_jwt_identity()
-        return {'message': f"Hello, user {user['id']}"}, 200
+        identity = get_jwt_identity()
+        claims = get_jwt()
+        return {
+            'message': f"Hello, user {identity}",
+            'is_admin': claims.get('is_admin')
+        }, 200

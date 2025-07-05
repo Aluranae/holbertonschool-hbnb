@@ -34,13 +34,6 @@ class Review(BaseModel):
 
     # Les relations sont gérées via backref (dans User et Place), donc rien à définir ici
 
-    def __init__(self, text, rating, author, place):
-        super().__init__()
-        self.text = self.validate_text(text, "Text")
-        self.rating = self.validate_rating(rating, "Rating")
-        self.user_id = self.validate_author(author, "Author").id
-        self.place_id = self.validate_place(place, "Place").id
-
     # ========== VALIDATIONS ==========
 
     def validate_text(self, value, field_name):

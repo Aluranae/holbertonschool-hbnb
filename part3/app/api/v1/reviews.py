@@ -36,16 +36,16 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         data = api.payload
-        current_user = get_jwt_identity()
-        data['user_id'] = current_user['id']
+        current_user_id = get_jwt_identity()
+        data['user_id'] = current_user_id
 
         place = facade.get_place(data['place_id'])
         if not place:
             api.abort(400, 'Invalid place_id')
-        if place.owner.id == current_user['id']:
+        if place.owner.id == current_user_id:
             api.abort(403, 'You cannot review your own place')
 
-        existing_reviews = facade.get_reviews_by_user(current_user['id'])
+        existing_reviews = facade.get_reviews_by_user(current_user_id)
         if any(r.place_id == data['place_id'] for r in existing_reviews):
             api.abort(409, 'You have already reviewed this place')
 
@@ -83,17 +83,28 @@ class ReviewResource(Resource):
     @api.marshal_with(review_output_model)
     def put(self, review_id):
         """Update a review's information"""
-        current_user = get_jwt_identity()
+
+        # Récupération de l'identité de l'utilisateur via le JWT
+        user_id = get_jwt_identity()
+
+        # Récupération de l'objet User correspondant
+        user = facade.get_user(user_id)
+        if not user:
+            api.abort(401, "Unauthorized")
+
+        # Récupération de la review ciblée
         review = facade.get_review(review_id)
         if not review:
             api.abort(404, 'Review not found')
 
-        if not current_user.get('is_admin') and review.user_id != current_user['id']:
+        # Vérifie que seul l'auteur ou un admin peut modifier la review
+        if not user.is_admin and review.user_id != user_id:
             api.abort(403, 'You can only edit your own reviews')
 
+        # Mise à jour de la review
         try:
             data = api.payload
-            data['user_id'] = current_user['id']
+            data['user_id'] = user_id  # Injection explicite
             updated = facade.update_review(review_id, data)
             return updated
         except ValueError as e:
@@ -105,21 +116,29 @@ class ReviewResource(Resource):
     @jwt_required()
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
+    @api.response(403, 'Unauthorized')
     def delete(self, review_id):
         """Delete a review"""
-        current_user = get_jwt_identity()
+        user_id = get_jwt_identity()
+        user = facade.get_user(user_id)
+        if not user:
+            api.abort(401, "Unauthorized")
+
         review = facade.get_review(review_id)
         if not review:
             api.abort(404, 'Review not found')
 
-        if not current_user.get('is_admin') and review.user_id != current_user['id']:
+        if not user.is_admin and review.user_id != user_id:
             api.abort(403, 'You can only delete your own reviews')
 
         try:
             facade.delete_review(review_id)
             return {'message': 'Review deleted successfully'}, 200
-        except ValueError:
-            api.abort(404, 'Review not found')
+        except ValueError as e:
+            msg = str(e)
+            if msg.endswith("not found"):
+                api.abort(404, msg)
+            api.abort(400, msg)
 
 
 @api.route('/places/<place_id>/reviews')

@@ -20,6 +20,7 @@ from app.api.v1.auth import api as auth_ns
 # Instanciation manuelle de bcrypt (conforme à ta structure)
 bcrypt = Bcrypt()
 
+
 def create_app(config_class=DevelopmentConfig):
     # Création de l'application Flask
     app = Flask(__name__)
