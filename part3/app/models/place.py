@@ -7,7 +7,7 @@ Hérite de BaseModel qui fournit id, created_at, updated_at.
 from app import db
 from app.models.base import BaseModel
 # Import requis pour les ForeignKey vers User et la table d'association Place-Amenity
-from app.models.place_amenity import place_amenity
+from app.models.amenity import place_amenity
 
 
 class Place(BaseModel):
