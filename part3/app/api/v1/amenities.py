@@ -58,7 +58,7 @@ class AmenityResource(Resource):
     def put(self, amenity_id):
         """Update an amenity's information"""
         claims = get_jwt()
-        if not claims.get('is_admin', False):  # Vérification du privilège admin
+        if not claims.get('is_admin', False):  # ✅ Vérification du privilège admin
             return {'error': 'Admin privileges required'}, 403
 
         data = request.json

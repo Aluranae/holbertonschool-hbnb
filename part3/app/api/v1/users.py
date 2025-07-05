@@ -112,11 +112,18 @@ class UserResource(Resource):
 
         user_data = api.payload
 
+        # Gestion de la modification de l'email
         if 'email' in user_data:
-            return {'error': 'You cannot modify email or password'}, 400
+            if not is_admin:
+                return {'error': 'You cannot modify email'}, 400
 
-        if 'password' in user_data:
-            return {'error': 'You cannot modify email or password'}, 400
+            existing = facade.get_user_by_email(user_data['email'])
+            if existing and existing.id != user_id:
+                return {'error': 'Email already in use'}, 400
+
+        # Gestion de la modification du mot de passe
+        if 'password' in user_data and not is_admin:
+            return {'error': 'You cannot modify password'}, 400
 
         try:
             updated_user = facade.update_user(user_id, user_data)

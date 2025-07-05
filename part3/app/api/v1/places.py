@@ -292,7 +292,6 @@ class PlacesByUser(Resource):
             return {"error": "Internal server error"}, 500
 
 
-
 # ===================================================
 # /api/v1/places/<place_id>
 # Ressource pour accéder ou modifier un lieu spécifique
@@ -365,7 +364,7 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        
+
         current_user = get_jwt_identity()
         claims = get_jwt()
         is_admin = claims.get('is_admin', False)
