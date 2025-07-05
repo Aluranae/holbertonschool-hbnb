@@ -33,9 +33,9 @@ class Amenity(BaseModel):
 
     # 🔗 Relation vers Place (many-to-many, via table d'association)
     places = db.relationship(
-        "Place",  # nom du modèle cible (doit être exactement le même nom que la classe Place)
+        "Place",
         secondary=place_amenity,
-        backref=db.backref("amenities", lazy=True),
+        back_populates="amenities",
         lazy="subquery"
     )
 

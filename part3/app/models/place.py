@@ -31,19 +31,19 @@ class Place(BaseModel):
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
 
-    # 🔗 Clé étrangère vers User (relation User → Place)
+    # Clé étrangère vers User (relation User → Place)
     user_id = db.Column(db.String(60), db.ForeignKey('users.id'), nullable=False)
 
-    # 🔗 Relation Place → Review (un-à-plusieurs)
+    # Relation Place → Review (un-à-plusieurs)
     reviews = db.relationship(
         "Review", backref="place", lazy=True, cascade="all, delete-orphan"
     )
 
-    # 🔗 Relation Place ↔ Amenity (plusieurs-à-plusieurs)
+    # Relation Place ↔ Amenity (plusieurs-à-plusieurs)
     amenities = db.relationship(
         "Amenity",
         secondary=place_amenity,
-        backref=db.backref("places", lazy=True),
+        back_populates="places",
         lazy="subquery"
     )
 
