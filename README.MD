@@ -84,7 +84,22 @@ This subproject delivers a secure, scalable backend ready for real-world deploym
 
 # HBnB - Simple Web Client
 
+This fourth phase of the HBnB project introduces **front-end development**, shifting the focus from backend services to the user interface. It consists in designing and implementing a **simple but dynamic web client** using **HTML5**, **CSS3**, and **JavaScript ES6**, that communicates seamlessly with the API built in previous parts.
 
+## Objectives
+
+The main objectives are:
+
+- Creating a **user-friendly and responsive interface** that respects provided design specs.
+- Using **JavaScript** to fetch and display dynamic data from the API via **AJAX/Fetch**.
+- Managing **authentication** and **user sessions** on the client side with JWT tokens stored in cookies.
+- Enabling user interactions without reloading pages — like logging in, viewing places, and submitting reviews.
+
+## Outcome
+
+Throughout this subproject, you'll implement essential pages such as Login, Place List, Place Details, and Add Review. Each page will communicate with the backend to retrieve or send data, while enforcing access control for authenticated users.
+
+By the end of this part, you’ll have developed a full-featured client that interacts securely and efficiently with the API, delivering a smooth user experience — and bridging the gap between your application’s front-end and back-end layers.
 
 [Simple Web Client](https://github.com/Aluranae/holbertonschool-hbnb/tree/main/part4)
 
