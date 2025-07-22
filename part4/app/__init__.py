@@ -3,6 +3,7 @@ from flask_restx import Api
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 # Configuration par défaut
 from config import DevelopmentConfig
@@ -25,6 +26,9 @@ def create_app(config_class=DevelopmentConfig):
     # Création de l'application Flask
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Activation du CORS
+    CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 
     # Désactive les warnings inutiles de SQLAlchemy (si pas déjà dans config.py)
     app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', False)

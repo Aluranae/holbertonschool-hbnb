@@ -8,6 +8,7 @@ et un exemple de route protégée par JWT (/protected).
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from app.services.facade import HBnBFacade
+from flask_cors import cross_origin
 
 # Création du namespace pour l'authentification
 api = Namespace('auth', description='Authentication operations')
@@ -27,6 +28,7 @@ class Login(Resource):
     @api.expect(login_model)
     @api.response(200, 'JWT token returned')
     @api.response(401, 'Invalid credentials')
+    @cross_origin()
     def post(self):
         """Authentifie l'utilisateur et renvoie un jeton JWT"""
         credentials = api.payload
