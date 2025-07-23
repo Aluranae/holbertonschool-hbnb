@@ -302,6 +302,7 @@ function displayPlaces(places) {
     button.addEventListener('click', (event) => {
         const id = event.target.dataset.id;
         console.log(`Vous avez cliqué sur le logoment avec l'id ${id}`);
+        window.location.href = `place.html?id=${id}`;
     });
     card.appendChild(button);
 
