@@ -2,6 +2,7 @@ from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
 from app.services import facade
+from flask_cors import cross_origin
 
 api = Namespace('reviews', description='Review operations')
 
@@ -33,6 +34,7 @@ class ReviewList(Resource):
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
     @api.marshal_with(review_output_model)
+    @cross_origin()
     def post(self):
         """Register a new review"""
         data = api.payload
@@ -57,6 +59,7 @@ class ReviewList(Resource):
 
     @api.response(200, 'List of reviews retrieved successfully')
     @api.marshal_list_with(review_output_model)
+    @cross_origin()
     def get(self):
         """Retrieve a list of all reviews"""
         reviews = facade.get_all_reviews()
@@ -68,6 +71,7 @@ class ReviewResource(Resource):
     @api.response(200, 'Review details retrieved successfully')
     @api.response(404, 'Review not found')
     @api.marshal_with(review_output_model)
+    @cross_origin()
     def get(self, review_id):
         """Get review details by ID"""
         review = facade.get_review(review_id)
@@ -81,6 +85,7 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
     @api.marshal_with(review_output_model)
+    @cross_origin()
     def put(self, review_id):
         """Update a review's information"""
 
@@ -117,6 +122,7 @@ class ReviewResource(Resource):
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     @api.response(403, 'Unauthorized')
+    @cross_origin()
     def delete(self, review_id):
         """Delete a review"""
         user_id = get_jwt_identity()
@@ -146,6 +152,7 @@ class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
     @api.response(404, 'Place not found')
     @api.marshal_list_with(review_output_model)
+    @cross_origin()
     def get(self, place_id):
         """Get all reviews for a specific place"""
         try:
@@ -160,6 +167,7 @@ class UserReviewList(Resource):
     @api.response(200, 'List of reviews for the user retrieved successfully')
     @api.response(404, 'User not found or no reviews found')
     @api.marshal_list_with(review_output_model)
+    @cross_origin()
     def get(self, user_id):
         """Get all reviews written by a specific user"""
         try:

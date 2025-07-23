@@ -2,6 +2,7 @@ from flask_restx import Namespace, Resource, fields
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt
 from app.services import facade
+from flask_cors import cross_origin
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -18,6 +19,7 @@ class AmenityList(Resource):
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Admin privileges required')
+    @cross_origin()
     def post(self):
         """Register a new amenity"""
         claims = get_jwt()
@@ -31,6 +33,7 @@ class AmenityList(Resource):
         return {'id': amenity.id, 'name': amenity.name}, 201
 
     @api.response(200, 'List of amenities retrieved successfully')
+    @cross_origin()
     def get(self):
         """Retrieve a list of all amenities"""
         amenities = facade.get_all_amenities()
@@ -42,6 +45,7 @@ class AmenityList(Resource):
 class AmenityResource(Resource):
     @api.response(200, 'Amenity details retrieved successfully')
     @api.response(404, 'Amenity not found')
+    @cross_origin()
     def get(self, amenity_id):
         """Get amenity details by ID"""
         amenity = facade.get_amenity(amenity_id)
@@ -55,6 +59,7 @@ class AmenityResource(Resource):
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Admin privileges required')
+    @cross_origin()
     def put(self, amenity_id):
         """Update an amenity's information"""
         claims = get_jwt()

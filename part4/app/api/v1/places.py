@@ -14,6 +14,7 @@ from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade  # Accès à la couche métier
 from app.api.v1.reviews import review_model
+from flask_cors import cross_origin
 
 # ===================================================
 # Définition du Namespace pour les opérations Place
@@ -57,7 +58,7 @@ place_model = api.model('Place', {
 # /api/v1/places/
 # Ressource pour créer ou lister tous les lieux
 # ===================================================
-@api.route('/')
+@api.route('/', strict_slashes=False)
 class PlaceList(Resource):
 
     @jwt_required()
@@ -67,6 +68,7 @@ class PlaceList(Resource):
     @api.response(404, 'Owner Not Found')
     @api.response(409, 'Conflict: Title already used by this owner')
     @api.response(500, 'Internal Server Error')
+    @cross_origin()
     def post(self):
         """
         Enregistre un nouveau lieu (place) à partir des données JSON reçues.
@@ -112,7 +114,7 @@ class PlaceList(Resource):
         # Gestion des erreurs inattendues (ex : crash interne, bug imprévu)
         except Exception as e:
             import traceback
-            print("❌ ERREUR CRITIQUE - Exception levée lors du POST /places")
+            print("ERREUR CRITIQUE - Exception levée lors du POST /places")
             print("Type :", type(e).__name__)
             print("Message :", str(e))
             traceback.print_exc()
@@ -120,6 +122,7 @@ class PlaceList(Resource):
 
     @api.response(200, 'List of places retrieved successfully')
     @api.response(500, 'Internal server error')
+    @cross_origin()
     def get(self):
         """
         Récupère la liste de tous les lieux enregistrés.
@@ -189,6 +192,7 @@ class PlaceSearch(Resource):
     @api.response(200, 'Place found')
     @api.response(400, 'Missing title parameter')
     @api.response(404, 'Place not found')
+    @cross_origin()
     def get(self):
         """
         Recherche un lieu par son titre exact (sensible à la casse).
@@ -244,6 +248,7 @@ class PlaceSearch(Resource):
 class PlacesByUser(Resource):
     @api.response(200, 'Places retrieved successfully for the user')
     @api.response(404, 'User not found or has no places')
+    @cross_origin()
     def get(self, user_id):
         """
         Récupère tous les lieux associés à un utilisateur (propriétaire) donné.
@@ -310,6 +315,7 @@ class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     @api.response(500, 'Internal server error')
+    @cross_origin()
     def get(self, place_id):
         """
         Récupère les détails d’un lieu spécifique par son ID.
@@ -364,6 +370,7 @@ class PlaceResource(Resource):
     @api.response(404, 'Place not found')
     @api.response(409, 'Conflict: Title already used by this owner')
     @api.response(500, 'Internal server error')
+    @cross_origin()
     def put(self, place_id):
         """
         Met à jour les informations d’un lieu par son ID.

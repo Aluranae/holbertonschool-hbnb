@@ -54,6 +54,7 @@ class Protected(Resource):
     @jwt_required()
     @api.response(200, 'Access granted')
     @api.response(401, 'Missing or invalid token')
+    @cross_origin()
     def get(self):
         """Un point de terminaison protégé nécessitant un JWT valide"""
         identity = get_jwt_identity()
