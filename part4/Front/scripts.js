@@ -38,7 +38,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
         logoutButton.addEventListener('click', logoutUser);
-}
+    }
+
+    if (document.body.classList.contains('landing-page')) {
+        const logo = document.querySelector('.logo-landing');
+        const sound = document.getElementById('landing-sound');
+
+        if (logo && sound) {
+            logo.addEventListener('click', (event) => {
+                event.preventDefault(); // ← bloque la redirection immédiate
+                sound.currentTime = 0;
+                sound.play();
+
+                // → Ajout de la classe visuelle
+                logo.classList.add('glow-pulse');
+
+                // Redirection après 1.5 seconde (à adapter selon ton son)
+                setTimeout(() => {
+                    logo.classList.remove('glow-pulse'); // nettoyage
+                    window.location.href = 'index.html';
+                }, 500);
+            });
+        }
+    }
 
 
 });
@@ -184,7 +206,7 @@ function checkAuthentication() {
 
   if (!token) {
     if (loginLink) {
-      loginLink.style.display = 'block';
+      loginLink.style.display = 'inline-block';
     if (logoutButton) logoutButton.style.display = 'none';
     }
   } else {

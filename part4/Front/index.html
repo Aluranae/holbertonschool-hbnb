@@ -8,16 +8,20 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="index-page">
     <div id="message" style="display:none;"></div>
     <header>
         <img src="images/logo.png" class="logo" alt="HBnB Logo">
-        <nav>
-            <a id="login-link" href="login.html" class="login-button">Login</a>
-            <a href="place.html" class="login-button">Place</a>
-            <a href="add_review.html" class="login-button">Review</a>
-            <button id="logout-button" style="display: none;">Déconnexion</button>
-        </nav>
+            <nav class="nav-buttons-group">
+                <div class="nav-links">
+                    <a id="login-link" href="login.html" class="login-button login-top">Login</a>
+                    <div class="nav-lower">
+                        <a href="place.html" class="login-button">Place</a>
+                        <a href="add_review.html" class="login-button">Review</a>
+                    </div>
+                </div>
+                <button id="logout-button" style="display: none;">Déconnexion</button>
+            </nav>
     </header>
     <main>
         <section id="filter">
@@ -28,6 +32,7 @@
             </select>
         </section>
         <section id="places-list">
+            <img src="images/naboohed.jpg" alt="villa naboo" class="naboo-img">
             <!-- List of places will be populated dynamically -->
         </section>
     </main>
