@@ -31,6 +31,12 @@ main {
     padding: 2rem;
 }
 
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
 
 /* === Cartes de contenu === */
 
