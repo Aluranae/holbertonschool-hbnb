@@ -35,6 +35,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (document.body.classList.contains('place-detail-page')) {
+        const placeId = getPlaceIdFromURL();
+        const token = getCookie('access_token');
+        console.log('Token JWT trouvé :', token);
+        console.log('ID du logement extrait de l’URL :', placeId);
+
+        const addReviewSection = document.getElementById('add-review');
+        if (!token && addReviewSection) {
+            addReviewSection.style.display = 'none';
+        } else if (addReviewSection) {
+            addReviewSection.style.display = 'block';
+            fetchPlaceDetails(token, placeId); // Étape 3 à implémenter ensuite
+        }
+    }
+
+
+
     const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
         logoutButton.addEventListener('click', logoutUser);
@@ -279,20 +296,20 @@ async function fetchPlaces(token) {
  * @param {Array} places - Liste des logements à afficher
  */
 function displayPlaces(places) {
-    // Étape 1 : Sélectionner l'élément #places-list
+    // Sélectionner l'élément #places-list
     const placesList = document.getElementById('places-list');
     if (!placesList) return;
 
-    // Étape 2 : Vider le contenu existant pour éviter les doublons
+    // Vider le contenu existant pour éviter les doublons
     placesList.textContent = '';
 
-    // Étape 3 : Vérifier que places est bien un tableau (optionnel mais pro)
+    // Vérifier que places est bien un tableau (optionnel mais pro)
     if (!Array.isArray(places)) {
         displayMessage('Erreur inattendue : la liste des logements est corrompue.');
         throw new Error('Données inattendues : places devrait être un tableau.');
     }
 
-    // Étape 4 : Parcourir la liste des logements
+    // Parcourir la liste des logements
     for (const place of places) {
         console.log(place); // pour debug
 
@@ -377,6 +394,136 @@ function filterPlacesByPrice(maxPrice) {
       card.style.display = 'none';
     }
   });
+}
+
+/**
+ * Extrait l'identifiant d’un logement depuis les paramètres de l’URL.
+ * @returns {string|null} - L’ID du logement si présent, sinon null.
+ */
+function getPlaceIdFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+}
+
+
+/**
+ * Récupère les détails d’un logement (Place) via l’API.
+ * @param {string} token - Le JWT pour l'autorisation
+ * @param {string} placeId - L'ID du logement à récupérer
+ */
+async function fetchPlaceDetails(token, placeId) {
+    try {
+        // Appel API pour récupérer un logement spécifique
+        const response = await fetch(`http://localhost:5000/api/v1/places/${placeId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        });
+
+        // Vérifie que la réponse HTTP est valide (code 200-299). Affiche une erreur sinon
+        if (!response.ok) {
+            const message = response.status === 401
+                ? 'Authentification requise pour accéder aux logements.'
+                : response.status === 500
+                    ? 'Erreur interne du serveur lors de la récupération des logements.'
+                    : 'Impossible de récupérer les données. Réessayez plus tard.';
+            displayMessage(message);
+            throw new Error(message);
+        }
+
+        // Tentative de conversion de la réponse en JSON. Gère les erreurs de parsing.
+        let place;
+        try {
+            place = await response.json();
+            console.log('Données brutes reçues de l’API :', place);
+        } catch (jsonError) {
+            displayMessage('Erreur : la réponse du serveur n’est pas un JSON valide.');
+            throw new Error('Réponse JSON invalide.');
+        }
+
+        // On passe directement l’objet place (car pas encapsulé dans { place: ... })
+        displayPlaceDetails(place);
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des logements : ', error);
+        displayMessage('Erreur lors du chargement des logements');
+    }
+}
+
+
+/**
+ * Affiche dynamiquement les détails d’un logement dans la page place.html
+ * @param {Object} place - L’objet contenant toutes les données du logement
+ */
+function displayPlaceDetails(place) {
+    // Sélectionner le conteneur .place-info
+    const placeInfo = document.querySelector('.place-info')
+    if (!placeInfo) return;
+
+    // Vider son contenu pour éviter les doublons
+    placeInfo.textContent = '';
+
+    // Création de la carte pour un logement
+    const card = document.createElement('div');
+    card.classList.add('place-card');
+
+    // Nom du logement
+    const title = document.createElement('h3');
+    title.textContent = place.name || place.title || 'Logement sans nom';
+    card.appendChild(title);
+
+    // Prix par nuit
+    const price = document.createElement('p');
+    const priceValue = place.price || place.price_per_night || 'Non renseigné';
+    price.innerHTML = `Prix par nuit: <strong>${priceValue} euro</strong>`;
+    card.appendChild(price);
+
+    // Description
+    const description = document.createElement('p');
+    description.textContent = place.description || 'Aucune description fournie.';
+    card.appendChild(description);
+
+    // Titre de la section des commodités
+    const amenitiesTitle = document.createElement('h4');
+    amenitiesTitle.textContent = 'Commodités disponibles';
+    card.appendChild(amenitiesTitle);
+
+    // Conteneur des commodités
+    const amenitiesList = document.createElement('ul');
+    if (Array.isArray(place.amenities)) {
+        for (const amenity of place.amenities) {
+            const item = document.createElement('li');
+            item.textContent = amenity.name || amenity.title || 'Commodité inconnue';
+            amenitiesList.appendChild(item);
+        }
+        card.appendChild(amenitiesList);
+    }
+
+    // Conteneur des avis
+    const reviewsContainer = document.createElement('div');
+    if (Array.isArray(place.reviews)) {
+        // Log de débogage
+        console.log('Exemple de review :', place.reviews[0]);
+
+        // Titre de la section des avis
+        const reviewTitle = document.createElement('h4');
+        reviewTitle.textContent = 'Avis des utilisateurs';
+        reviewsContainer.appendChild(reviewTitle);
+
+        // Affichage des avis
+        for (const review of place.reviews) {
+            const item = document.createElement('p');
+            item.textContent = `${review.author || 'Auteur inconnu'} : ${review.comment || review.content || review.message || 'Aucun avis'}`;
+            reviewsContainer.appendChild(item);
+        }
+
+        card.appendChild(reviewsContainer);
+    }
+
+    // Ajout final de la carte dans le DOM
+    placeInfo.appendChild(card);
 }
 
 /**
