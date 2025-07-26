@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (document.body.classList.contains('place-detail-page')) {
         const placeId = getPlaceIdFromURL();
+        console.log('PlaceId:', placeId);
         const token = getCookie('access_token');
         console.log('Token JWT trouvé :', token);
         console.log('ID du logement extrait de l’URL :', placeId);
@@ -46,11 +47,40 @@ document.addEventListener('DOMContentLoaded', () => {
             addReviewSection.style.display = 'none';
         } else if (addReviewSection) {
             addReviewSection.style.display = 'block';
-            fetchPlaceDetails(token, placeId); // Étape 3 à implémenter ensuite
+            fetchPlaceDetails(token, placeId);
         }
     }
 
+    // Ajout d'un écouteur d’événement du formulaire
+    if (document.body.classList.contains('review-page')) {
+        const token = getCookie('access_token');
+        if (!token) {
+            window.location.href = 'index.html';
+            return;
+        }
+    const form = document.getElementById('review-form');
+        if (form) {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault(); // bloc le rechargement de la page
+                const textReview = document.getElementById('review').value;
+                const note = document.getElementById('rating').value;
+                const token = getCookie('access_token');
+                const idPlace = getPlaceIdFromURL()
+                if (textReview.trim() === "" || note === "" || token === null || idPlace === "") {
+                    displayMessage('Tout les champs doivent être remplis');
+                    return;
+                
+                }
+                // logs de vérification
+                console.log('Token JWT :', token);
+                console.log('ID du logement :', idPlace);
+                console.log('Texte de l’avis :', textReview);
+                console.log('Note :', note);
 
+                await submitReview(token, idPlace, textReview, note);
+            });
+        }
+}
 
     const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
@@ -63,14 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (logo && sound) {
             logo.addEventListener('click', (event) => {
-                event.preventDefault(); // ← bloque la redirection immédiate
+                event.preventDefault(); // bloque la redirection immédiate
                 sound.currentTime = 0;
                 sound.play();
 
-                // → Ajout de la classe visuelle
+                // Ajout de la classe visuelle
                 logo.classList.add('glow-pulse');
 
-                // Redirection après 1.5 seconde (à adapter selon ton son)
+                // Redirection après 0.5 seconde
                 setTimeout(() => {
                     logo.classList.remove('glow-pulse'); // nettoyage
                     window.location.href = 'index.html';
@@ -78,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-
 
 });
 
@@ -123,7 +152,7 @@ async function loginUser (email, password) {
     }
 
     // Préparation du cookie JWT via fonction dédiée
-    const cookie = buildAuthCookie(data.access_token); // ← intégration ici
+    const cookie = buildAuthCookie(data.access_token);
 
     // Stockage du cookie dans le navigateur
     document.cookie = cookie;
@@ -162,7 +191,7 @@ function buildAuthCookie(token, maxAgeSeconds = 3600) {
  * Cette fonction peut aussi afficher un succès (vert), une info (bleu), ou autre.
  *
  * @param {string} text - Le texte à afficher.
- * @param {string} color - La couleur du message (ex: 'red', 'green', 'blue'). Rouge par défaut.
+ * @param {string} color - La couleur du message rouge par défaut.
  */
 function displayMessage (text, color = 'red') {
     const messageDiv = document.getElementById('message');
@@ -242,8 +271,6 @@ function checkAuthentication() {
     }
   }
 }
-
-
 
 /**
  * Récupère les données des logements via l'API.
@@ -546,6 +573,76 @@ function displayPlaceDetails(place) {
 }
 
 /**
+ * Envoie un avis utilisateur pour un logement donné à l’API.
+ * @param {string} token - Le token JWT pour l’authentification
+ * @param {string} placeId - L’ID du logement concerné
+ * @param {string} reviewText - Le texte de l’avis saisi par l’utilisateur
+ * @param {string|number} rating - La note attribuée (1 à 5)
+ */
+async function submitReview(token, placeId, reviewText, rating) {
+    try {
+
+        // Décoder le token pour extraire l’ID utilisateur
+        const tokenPayload = parseJwt(token);
+        const userId = tokenPayload.sub || tokenPayload.id;
+
+        if (!userId) {
+            throw new Error('Impossible d’extraire l’ID utilisateur depuis le token.');
+        }
+
+        // Appel API pour récupérer un logement spécifique
+        const response = await fetch(`http://localhost:5000/api/v1/reviews/`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: reviewText,
+                rating: parseInt(rating),
+                user_id: userId,
+                place_id: placeId,
+            })
+        });
+        // Vérifie que la réponse HTTP est valide (code 200-299). Affiche une erreur sinon
+        if (!response.ok) {
+            const message = response.status === 401
+                ? 'Authentification requise pour accéder aux logements.'
+                : response.status === 500
+                    ? 'Erreur interne du serveur lors de la récupération des logements.'
+                    : 'Impossible de récupérer les données. Réessayez plus tard.';
+            displayMessage(message);
+            throw new Error(message);
+        }
+
+        // Tentative de conversion de la réponse en JSON. Gère les erreurs de parsing.
+        let place;
+        try {
+            place = await response.json();
+            console.log('Données brutes reçues de l’API :', place);
+        } catch (jsonError) {
+            displayMessage('Erreur : la réponse du serveur n’est pas un JSON valide.');
+            throw new Error('Réponse JSON invalide.');
+        }
+
+        displayMessage('Avis soumis avec succès !', 'green');
+        document.getElementById('review-form').reset();
+
+        // Tentative de rafrachissement des avis dynamiquement
+        try {
+            fetchPlaceDetails(token, placeId);
+        } catch (refreshError) {
+            console.warn("L'avis a bien été envoyé, mais le rafraîchissement automatique a échoué :", refreshError);
+        }
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des logements : ', error);
+        displayMessage('Erreur lors du chargement des logements');
+    }
+}
+
+
+/**
  * Déconnecte l'utilisateur en supprimant le cookie JWT
  * puis redirige vers la page de connexion.
  */
@@ -553,9 +650,9 @@ function logoutUser() {
     // Expire le cookie immédiatement
     document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax';
 
-    // Optionnel : journalisation
+    // journalisation
     console.log('Déconnexion effectuée. Cookie supprimé.');
 
     // Redirection vers la page de login
-    window.location.href = 'login.html'; // ← adapte selon le nom de ta page de login
+    window.location.href = 'login.html';
 }
