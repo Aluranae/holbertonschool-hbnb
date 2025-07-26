@@ -224,12 +224,16 @@ function checkAuthentication() {
   if (!token) {
     if (loginLink) {
       loginLink.style.display = 'inline-block';
-    if (logoutButton) logoutButton.style.display = 'none';
+    }
+    if (logoutButton) {
+      logoutButton.style.display = 'none';
     }
   } else {
     if (loginLink) {
       loginLink.style.display = 'none';
-    if (logoutButton) logoutButton.style.display = 'inline-block';
+    }
+    if (logoutButton) {
+      logoutButton.style.display = 'inline-block';
     }
 
     // Ne fait appel à fetchPlaces que si #places-list existe
@@ -238,6 +242,7 @@ function checkAuthentication() {
     }
   }
 }
+
 
 
 /**
@@ -316,6 +321,13 @@ function displayPlaces(places) {
     // création de la carte pour un logement.
     const card = document.createElement('div');
     card.classList.add('place-card');
+
+    // Ajout d'image
+    const img = document.createElement('img');
+    img.src = place.image_url || 'images/default.png';
+    img.alt = place.title || place.name || 'Image logement';
+    img.classList.add('place-image');
+    card.appendChild(img);
 
     // Titre du logement (fallback : 'Logement sans nom')
     const title = document.createElement('h3');
@@ -464,6 +476,13 @@ function displayPlaceDetails(place) {
 
     // Vider son contenu pour éviter les doublons
     placeInfo.textContent = '';
+
+    // Image du logement
+    const image = document.createElement('img');
+    image.src = place.image_url || 'images/default.png';
+    image.alt = place.title || place.name || 'Image du logement';
+    image.classList.add('place-detail-image');
+    placeInfo.appendChild(image);
 
     // Création de la carte pour un logement
     const card = document.createElement('div');

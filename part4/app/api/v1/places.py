@@ -48,6 +48,7 @@ place_model = api.model('Place', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
+    'image_url': fields.String(required=False, description='Image URL of the place'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's"),
     'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
@@ -83,7 +84,7 @@ class PlaceList(Resource):
             current_user = get_jwt_identity()
 
             # Ajout de l'ID du propriétaire dans les données reçues
-            data['owner_id'] = current_user 
+            data['owner_id'] = current_user
 
             # Extraction de title et vérification de conflit avec cet owner
             title = data.get("title")
@@ -102,6 +103,7 @@ class PlaceList(Resource):
                 'price': new_place.price,
                 'latitude': new_place.latitude,
                 'longitude': new_place.longitude,
+                'image_url': new_place.image_url,
                 'owner_id': new_place.owner.id
             }
 
@@ -144,6 +146,7 @@ class PlaceList(Resource):
                     "price": place.price,
                     "latitude": place.latitude,
                     "longitude": place.longitude,
+                    "image_url": place.image_url,
                     "owner": {
                         "id": place.owner.id,
                         "first_name": place.owner.first_name,
@@ -212,6 +215,7 @@ class PlaceSearch(Resource):
             "price": place.price,
             "latitude": place.latitude,
             "longitude": place.longitude,
+            "image_url": place.image_url,
             "owner": {
                 "id": place.owner.id,
                 "first_name": place.owner.first_name,
@@ -267,6 +271,7 @@ class PlacesByUser(Resource):
                     "price": place.price,
                     "latitude": place.latitude,
                     "longitude": place.longitude,
+                    "image_url": place.image_url,
                     "owner": {
                         "id": place.owner.id,
                         "first_name": place.owner.first_name,
@@ -332,6 +337,7 @@ class PlaceResource(Resource):
                 "price": place.price,
                 "latitude": place.latitude,
                 "longitude": place.longitude,
+                "image_url": place.image_url,
                 "owner": {
                     "id": place.owner.id,
                     "first_name": place.owner.first_name,
@@ -437,6 +443,7 @@ class PlaceResource(Resource):
                 'price': updated_place.price,
                 'latitude': updated_place.latitude,
                 'longitude': updated_place.longitude,
+                "image_url": place.image_url,
                 'owner_id': updated_place.owner.id,
                 'amenities': [
                     {'id': amenity.id, 'name': amenity.name}

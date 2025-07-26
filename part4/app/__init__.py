@@ -28,7 +28,7 @@ def create_app(config_class=DevelopmentConfig):
     app.config.from_object(config_class)
 
     # Activation du CORS
-    CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
+    CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}}, supports_credentials=True)
 
     # Désactive les warnings inutiles de SQLAlchemy (si pas déjà dans config.py)
     app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', False)
@@ -62,5 +62,11 @@ def create_app(config_class=DevelopmentConfig):
     api.add_namespace(amenities_ns, path='/api/v1/amenities')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(auth_ns, path='/api/v1/auth')
+
+    @app.after_request
+    def add_cors_headers(response):
+        print("↩️ Requête CORS traitée, headers de réponse :")
+        print(response.headers)
+        return response
 
     return app

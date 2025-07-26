@@ -30,6 +30,9 @@ header {
     background-color: #333;
     color: #fff;
     padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* === Nav section === */
@@ -39,15 +42,30 @@ nav a {
     margin-left: 1rem;
 }
 
+/* Nouvelle disposition pour aligner login/logout à droite */
+.nav-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
 /* Structure du bloc nav */
 .nav-buttons-group {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
-.nav-links {
+/* Bloc gauche : Home, Place, Review */
+.nav-left {
     display: flex;
-    flex-direction: column;
+}
+
+/* Bloc droit : Login/Logout */
+.nav-right {
+    display: flex;
+    gap: 10px;
 }
 
 /* Grouper Place et Review sur une seule ligne */
@@ -135,15 +153,53 @@ footer {
 #filter,
 #filter h2,
 #filter label {
-    font-family: 'StarJedi', sans-serif;
     font-size: 1.2rem;
     color: #cdefef;
 }
 
 #filter select {
-    font-family: 'StarJedi', sans-serif;
     font-size: 1.2rem;
     color: #333;
+}
+
+/* === Place page === */
+
+.place-detail-page::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-image: url('images/bg_landing_Stars_1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    filter: grayscale(90%);
+    z-index: -1;
+}
+
+/* === Review page === */
+
+.review-page::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-image: url('images/bg_landing_Stars_1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    filter: grayscale(90%);
+    z-index: -1;
 }
 
 /* Images */
@@ -161,7 +217,44 @@ footer {
 
 /* === Cartes de contenu === */
 
-.place-card,
+#places-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    padding: 2rem;
+    justify-items: center;
+}
+
+/* Responsive layout pour les écrans ≤ 1024px. */ 
+@media (max-width: 1024px) {
+  #places-list {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+.place-card {
+    width: 460px;
+    /* height: auto; */
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: flex-start;
+    backdrop-filter: blur(5px);
+    color: #fff;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.place-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: 8px;
+}
+
 .review-card {
     margin: 20px;
     padding: 10px;
@@ -169,13 +262,28 @@ footer {
     border-radius: 10px;
 }
 
+.add-review {
+    color: #fff;
+    backdrop-filter: blur(5px);
+}
+
 /* === Détails de logement === */
 
 .place-details {
     margin: 20px;
     padding: 10px;
+    backdrop-filter: blur(5px);
+    color: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
+}
+
+.place-detail-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: 10px;
 }
 
 .place-info {
@@ -185,11 +293,13 @@ footer {
 /* === Boutons et formulaires === */
 
 .details-button,
-.login-button {
+.login-button,
+.logout-button {
     display: inline-block;
     max-width: fit-content;
     font-family: 'StarJedi', sans-serif;
     font-weight: 500;
+    font-size: 1rem;
     letter-spacing: 0.5px;
     margin: 10px 0;
     padding: 8px 12px;
@@ -211,7 +321,8 @@ footer {
     display: block;
 }
 
-.login-button:hover {
+.login-button:hover,
+.logout-button:hover {
     background-color: #00ffff;
     color: #111;
 }

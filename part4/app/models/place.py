@@ -20,6 +20,7 @@ class Place(BaseModel):
     - price (float) : prix par nuit (obligatoire)
     - latitude (float) : latitude géographique (facultatif)
     - longitude (float) : longitude géographique (facultatif)
+    - image_url (string) : url de l'image (facultatif)
     """
 
     __tablename__ = "places"
@@ -30,6 +31,7 @@ class Place(BaseModel):
     price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
+    image_url = db.Column(db.String(255), nullable=True)
 
     # Clé étrangère vers User (relation User → Place)
     user_id = db.Column(db.String(60), db.ForeignKey('users.id'), nullable=False)
@@ -107,6 +109,8 @@ class Place(BaseModel):
                 self.latitude = self.validate_latitude(value, "Latitude")
             elif key == "longitude":
                 self.longitude = self.validate_longitude(value, "Longitude")
+            elif key == "image_url":
+                self.image_url = str(value).strip() if value else None
 
     def __repr__(self):
         return f"<Place {self.id}: {self.title}>"
