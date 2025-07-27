@@ -96,6 +96,8 @@ class Review(BaseModel):
             "rating": self.rating,
             "user_id": self.user_id,
             "place_id": self.place_id,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat()
+            "author": {
+                "first_name": self.author.first_name,
+                "last_name": self.author.last_name,
+            } if self.author else None
         }

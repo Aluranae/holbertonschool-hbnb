@@ -52,35 +52,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Ajout d'un écouteur d’événement du formulaire
-    if (document.body.classList.contains('review-page')) {
+    const reviewForm = document.getElementById('review-form');
+    if (reviewForm) {
         const token = getCookie('access_token');
         if (!token) {
             window.location.href = 'index.html';
             return;
         }
-    const form = document.getElementById('review-form');
-        if (form) {
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault(); // bloc le rechargement de la page
-                const textReview = document.getElementById('review').value;
-                const note = document.getElementById('rating').value;
-                const token = getCookie('access_token');
-                const idPlace = getPlaceIdFromURL()
-                if (textReview.trim() === "" || note === "" || token === null || idPlace === "") {
-                    displayMessage('Tout les champs doivent être remplis');
-                    return;
-                
-                }
-                // logs de vérification
-                console.log('Token JWT :', token);
-                console.log('ID du logement :', idPlace);
-                console.log('Texte de l’avis :', textReview);
-                console.log('Note :', note);
 
-                await submitReview(token, idPlace, textReview, note);
-            });
-        }
-}
+        reviewForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const textReview = document.getElementById('review').value;
+            const note = document.getElementById('rating').value;
+            const idPlace = getPlaceIdFromURL();
+
+            if (textReview.trim() === '' || note === '' || token === null || idPlace === null) {
+                displayMessage('Tous les champs doivent être remplis');
+                return;
+            }
+
+            console.log('Token JWT :', token);
+            console.log('ID du logement :', idPlace);
+            console.log('Texte de l’avis :', textReview);
+            console.log('Note :', note);
+
+            await submitReview(token, idPlace, textReview, note);
+        });
+    }
+
 
     const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
@@ -561,7 +561,7 @@ function displayPlaceDetails(place) {
         // Affichage des avis
         for (const review of place.reviews) {
             const item = document.createElement('p');
-            item.textContent = `${review.author || 'Auteur inconnu'} : ${review.comment || review.content || review.message || 'Aucun avis'}`;
+            item.textContent = `${review.user?.first_name || 'Auteur'} ${review.user?.last_name || ''} : ${review.text || 'Aucun avis'}`;
             reviewsContainer.appendChild(item);
         }
 
@@ -589,6 +589,8 @@ async function submitReview(token, placeId, reviewText, rating) {
         if (!userId) {
             throw new Error('Impossible d’extraire l’ID utilisateur depuis le token.');
         }
+
+        console.log('userId extrait du token :', userId);
 
         // Appel API pour récupérer un logement spécifique
         const response = await fetch(`http://localhost:5000/api/v1/reviews/`, {

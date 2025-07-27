@@ -111,7 +111,6 @@ class HBnBFacade:
         self.user_repo.add(user)  # commit SQLAlchemy
         return user
 
-
     """ A activer plus tard
     def delete_user(self, user_id):
 
@@ -347,7 +346,16 @@ class HBnBFacade:
             place.reviews.append(review)     # synchronisation relationnelle
             self.place_repo.add(place)    # re-save du lieu avec la review liée
 
-            return review
+            return {
+                "id": review.id,
+                "text": review.text,
+                "rating": review.rating,
+                "user_id": review.author.id,
+                "place_id": review.place.id,
+                "author": {
+                    "first_name": review.author.first_name
+                }
+            }
 
         except (KeyError, TypeError, ValueError) as e:
             raise ValueError(f"Invalid review data: {e}")
