@@ -47,19 +47,16 @@ document.addEventListener('DOMContentLoaded', () => {
             addReviewSection.style.display = 'none';
         } else if (addReviewSection) {
             addReviewSection.style.display = 'block';
-            fetchPlaceDetails(token, placeId);
         }
+        fetchPlaceDetails(token, placeId);
     }
 
     // Ajout d'un écouteur d’événement du formulaire
     const reviewForm = document.getElementById('review-form');
     if (reviewForm) {
         const token = getCookie('access_token');
-        if (!token) {
-            window.location.href = 'index.html';
-            return;
-        }
 
+    if (token) {
         reviewForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
@@ -80,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await submitReview(token, idPlace, textReview, note);
         });
     }
+}
 
 
     const logoutButton = document.getElementById('logout-button');
