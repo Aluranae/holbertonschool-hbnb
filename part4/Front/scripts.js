@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     logo.classList.remove('glow-pulse'); // nettoyage
                     window.location.href = 'index.html';
-                }, 500);
+                }, 900);
             });
         }
     }
@@ -264,13 +264,14 @@ function checkAuthentication() {
     if (logoutButton) {
       logoutButton.style.display = 'inline-block';
     }
+  }
 
-    // Ne fait appel à fetchPlaces que si #places-list existe
-    if (document.getElementById('places-list')) {
-      fetchPlaces(token);
-    }
+  // Appel de fetchPlaces dans tous les cas
+  if (document.getElementById('places-list')) {
+    fetchPlaces(token);
   }
 }
+
 
 /**
  * Récupère les données des logements via l'API.
@@ -282,10 +283,14 @@ async function fetchPlaces(token) {
         // Appel API pour Places
         const response = await fetch('http://localhost:5000/api/v1/places/', {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
+            headers: token
+                ? {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                  }
+                : {
+                    "Content-Type": "application/json"
+                  }
         });
 
         // Gestion d’échec HTTP (ex: 401 ou 500)
