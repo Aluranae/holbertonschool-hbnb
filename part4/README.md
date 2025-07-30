@@ -105,7 +105,7 @@ Navigate to http://localhost:5500/Front/landing.html in your browser.
 Front-end :  
 - HTML5
 - CSS3
-- JavaScript (Vanilla)
+- JavaScript (Vanilla)  
 Back-end :  
 - Fetch API
 - REST API (Flask back-end)
