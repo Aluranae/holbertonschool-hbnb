@@ -235,14 +235,14 @@ footer {
 .place-card {
     width: 460px;
     /* height: auto; */
-    padding: 12px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: flex-start;
     backdrop-filter: blur(5px);
     color: #fff;
-    margin: 10px;
+    margin: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
 }

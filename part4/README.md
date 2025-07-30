@@ -33,7 +33,7 @@ All features are powered by a custom REST API hosted on the back-end. Key endpoi
 
 ## Screenshot
 
-_Add screenshots of the UI here._
+_SOON._
 
 ## Requirements
 
