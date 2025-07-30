@@ -116,7 +116,7 @@ Back-end :
 
 ## Author
 
-- Ben @Holberton School Fréjus
+- Benjamin Estrada
 
 ---
 
