@@ -106,6 +106,7 @@ Front-end :
 - HTML5
 - CSS3
 - JavaScript (Vanilla)  
+
 Back-end :  
 - Fetch API
 - REST API (Flask back-end)
