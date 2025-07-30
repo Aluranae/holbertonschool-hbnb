@@ -52,7 +52,7 @@ _SOON._
 
 ```bash
 git clone https://github.com/yourusername/holbertonschool-hbnb.git
-cd hbnb-simple-web-client
+cd hbnb/part4
 ```
 
 2. Install back-end dependencies:
