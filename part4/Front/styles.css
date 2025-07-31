@@ -234,7 +234,6 @@ footer {
 
 .place-card {
     width: 460px;
-    /* height: auto; */
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -315,12 +314,6 @@ footer {
     display: block;
     margin-bottom: 10px;
 }
-
-/*
-.login-top::after {
-    content: "";
-    display: block;
-} */
 
 .login-button:hover,
 .logout-button:hover {
