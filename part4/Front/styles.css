@@ -238,7 +238,7 @@ footer {
     padding: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: space-between;
     align-items: flex-start;
     backdrop-filter: blur(5px);
     color: #fff;
@@ -261,6 +261,8 @@ footer {
     border: 1px solid #ddd;
     border-radius: 10px;
 }
+
+/* === Section Review === */
 
 .add-review {
     color: #fff;
@@ -292,7 +294,6 @@ footer {
 
 /* === Boutons et formulaires === */
 
-.details-button,
 .login-button,
 .logout-button {
     display: inline-block;
@@ -326,6 +327,24 @@ footer {
     background-color: #00ffff;
     color: #111;
 }
+
+.details-button {
+    display: inline-block;
+    font-family: 'StarJedi', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    border: none;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+
+    margin-top: 15px;
+    align-self: center;
+}
+
 
 .form,
 .add-review {
