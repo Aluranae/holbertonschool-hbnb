@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ajout de la classe visuelle
                 logo.classList.add('glow-pulse');
 
-                // Redirection après 0.5 seconde
+                // Redirection après 0.9 seconde
                 setTimeout(() => {
                     logo.classList.remove('glow-pulse'); // nettoyage
                     window.location.href = 'index.html';
