@@ -43,7 +43,7 @@ List of place (index.html):
   <img src="images/list_of_places.png"/>
 </p>
 
-Place details (place.html):
+Place details (place.html):  
 _SOON._
 
 ## Requirements
