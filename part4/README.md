@@ -35,7 +35,7 @@ All features are powered by a custom REST API hosted on the back-end. Key endpoi
 
 List of place (index.html):
 <p align="center">
-  <img src="images/list_of_places.png" width="800" />
+  <img src="images/list_of_places.png" width="" />
 </p>
 
 _SOON._
