@@ -31,13 +31,14 @@ All features are powered by a custom REST API hosted on the back-end. Key endpoi
 - `POST /api/v1/reviews/` — Submit a review (authenticated).
 - `GET /api/v1/reviews/?place_id=<id>` — Fetch reviews for a place.
 
-## Screenshot
+## Screenshots of the website
 
 List of place (index.html):
 <p align="center">
   <img src="images/list_of_places.png"/>
 </p>
 
+Place details (place.html):
 _SOON._
 
 ## Requirements
