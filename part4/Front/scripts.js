@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Vérifie le status de l'authentification au chargement d'index.html
     checkAuthentication();
 
-    // Ajoute un écouteur d'événement sur le menu déroulant de prix
+    // Ecouteur d'événement sur le menu déroulant de prix
     // Chaque changement déclenche le filtrage dynamique des logements affichés
     const priceFilter = document.getElementById('price-filter');
     if (priceFilter) {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchPlaceDetails(token, placeId);
     }
 
-    // Ajout d'un écouteur d’événement du formulaire
+    // Ecouteur d’événement du formulaire
     const reviewForm = document.getElementById('review-form');
     if (reviewForm) {
         const token = getCookie('access_token');
@@ -500,7 +500,6 @@ async function fetchPlaceDetails(token, placeId) {
  * @param {Object} place - L’objet contenant toutes les données du logement
  */
 function displayPlaceDetails(place) {
-    // Sélectionner le conteneur .place-info
     const placeInfo = document.querySelector('.place-info')
     if (!placeInfo) return;
 
