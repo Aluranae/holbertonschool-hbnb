@@ -202,19 +202,6 @@ footer {
     z-index: -1;
 }
 
-/* Images */
-
-.naboo-img {
-    display: block;
-    margin-top: 30px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 30%;
-    height: auto;
-    filter: drop-shadow(0 0 10px #ff0000);
-
-}
-
 /* === Cartes de contenu === */
 
 #places-list {
