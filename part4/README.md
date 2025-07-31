@@ -33,6 +33,11 @@ All features are powered by a custom REST API hosted on the back-end. Key endpoi
 
 ## Screenshots of the website
 
+Landing page (langing.html):
+<p align="center">
+  <img src="images/Landing.png"/>
+</p>
+
 List of place (index.html):
 <p align="center">
   <img src="images/list_of_places.png"/>
