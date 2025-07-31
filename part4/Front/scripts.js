@@ -98,11 +98,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ajout de la classe visuelle
                 logo.classList.add('glow-pulse');
 
-                // Redirection après 0.9 seconde
+                // Redirection après 0.6 seconde
                 setTimeout(() => {
                     logo.classList.remove('glow-pulse'); // nettoyage
                     window.location.href = 'index.html';
-                }, 800);
+                }, 600);
             });
         }
     }
