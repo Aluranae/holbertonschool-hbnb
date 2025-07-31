@@ -646,7 +646,6 @@ async function submitReview(token, placeId, reviewText, rating) {
     }
 }
 
-
 /**
  * Déconnecte l'utilisateur en supprimant le cookie JWT
  * puis redirige vers la page de connexion.
