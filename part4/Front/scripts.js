@@ -338,7 +338,7 @@ function displayPlaces(places) {
     // Vider le contenu existant pour éviter les doublons
     placesList.textContent = '';
 
-    // Vérifier que places est bien un tableau (optionnel mais pro)
+    // Vérifier que places est bien un tableau
     if (!Array.isArray(places)) {
         displayMessage('Erreur inattendue : la liste des logements est corrompue.');
         throw new Error('Données inattendues : places devrait être un tableau.');
@@ -609,7 +609,7 @@ async function submitReview(token, placeId, reviewText, rating) {
                 place_id: placeId,
             })
         });
-        // Vérifie que la réponse HTTP est valide (code 200-299). Affiche une erreur sinon
+        // Vérifie que la réponse HTTP est valide. Affiche une erreur sinon
         if (!response.ok) {
             const message = response.status === 401
                 ? 'Authentification requise pour accéder aux logements.'
