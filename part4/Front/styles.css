@@ -42,7 +42,7 @@ nav a {
     margin-left: 1rem;
 }
 
-/* Nouvelle disposition pour aligner login/logout à droite */
+/* alignement du login/logout à droite */
 .nav-links {
     display: flex;
     justify-content: space-between;
@@ -57,10 +57,10 @@ nav a {
     width: 100%;
 }
 
-/* Bloc gauche : Home, Place, Review */
+/* Bloc gauche : Home, Place, Review 
 .nav-left {
     display: flex;
-}
+}*/
 
 /* Bloc droit : Login/Logout */
 .nav-right {
@@ -68,12 +68,12 @@ nav a {
     gap: 10px;
 }
 
-/* Grouper Place et Review sur une seule ligne */
+/* Grouper Place et Review sur une seule ligne
 .nav-lower {
     display: flex;
     flex-direction: row;
     justify-content: start;
-}
+}*/
 
 /* === Main section === */
 
@@ -116,12 +116,13 @@ footer {
 }
 
 /* === Landing page === */
+
 .landing-page {
     background-image: url('images/bg_landing_Stars_1.jpg');
-    background-size: cover;         /* adapte à l’écran */
-    background-position: center;    /* centré horizontal/vertical */
-    background-repeat: no-repeat;   /* pas de répétition */
-    background-attachment: fixed;   /* optionnel : effet "parallaxe" */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 /* === Index page === */
