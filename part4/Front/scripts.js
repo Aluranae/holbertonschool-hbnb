@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     logo.classList.remove('glow-pulse'); // nettoyage
                     window.location.href = 'index.html';
-                }, 900);
+                }, 800);
             });
         }
     }
