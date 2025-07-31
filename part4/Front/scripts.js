@@ -431,7 +431,7 @@ function filterPlacesByPrice(maxPrice) {
     const price = parseInt(match[1]);
 
     if (maxPrice === 'all' || price <= parseInt(maxPrice)) {
-      card.style.display = 'block';
+      card.style.display = 'flex';
     } else {
       card.style.display = 'none';
     }

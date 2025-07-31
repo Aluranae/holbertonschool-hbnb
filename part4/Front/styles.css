@@ -316,11 +316,11 @@ footer {
     margin-bottom: 10px;
 }
 
-/* Force le saut de ligne après login */
+/*
 .login-top::after {
     content: "";
     display: block;
-}
+} */
 
 .login-button:hover,
 .logout-button:hover {
@@ -362,7 +362,7 @@ footer {
 
 .logo-landing {
     width: 700px;
-    height: auto; /* pour garder les proportions */
+    height: auto;
     display: inline-block;
     margin: 0 auto;
     cursor: pointer;
