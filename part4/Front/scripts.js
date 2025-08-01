@@ -367,7 +367,7 @@ function displayPlaces(places) {
     // Prix par nuit (fallback : 'Non renseigné')
     const price = document.createElement('p');
     const priceValue = place.price || place.price_per_night || 'Non renseigné';
-    price.innerHTML = `Prix par nuit: <strong>${priceValue} euro</strong>`;
+    price.innerHTML = `Prix par nuit: <strong>${priceValue} crédits</strong>`;
     card.appendChild(price);
 
     // Description du logement (fallback : 'Aucune description fournie.')
@@ -506,6 +506,17 @@ function displayPlaceDetails(place) {
     // Vider son contenu pour éviter les doublons
     placeInfo.textContent = '';
 
+    // Bloc titre
+    const titleBlock = document.createElement('div');
+    titleBlock.classList.add('title-block');
+
+    const title = document.createElement('h2');
+    title.textContent = place.name || place.title || 'Logement sans nom';
+
+    titleBlock.appendChild(title);
+
+    placeInfo.appendChild(titleBlock);
+
     // Image du logement
     const image = document.createElement('img');
     image.src = place.image_url || 'images/default.png';
@@ -513,30 +524,43 @@ function displayPlaceDetails(place) {
     image.classList.add('place-detail-image');
     placeInfo.appendChild(image);
 
-    // Création de la carte pour un logement
-    const card = document.createElement('div');
-    card.classList.add('place-card');
+    // Conteneur (prix + description)
+    const infoRow = document.createElement('div');
+    infoRow.classList.add('info-row');
 
-    // Nom du logement
-    const title = document.createElement('h3');
-    title.textContent = place.name || place.title || 'Logement sans nom';
-    card.appendChild(title);
+    // Bloc prix
+    const priceBlock = document.createElement('div');
+    priceBlock.classList.add('price-block');
 
-    // Prix par nuit
     const price = document.createElement('p');
     const priceValue = place.price || place.price_per_night || 'Non renseigné';
-    price.innerHTML = `Prix par nuit: <strong>${priceValue} euro</strong>`;
-    card.appendChild(price);
+    price.innerHTML = `Prix par nuit: <strong>${priceValue} crédits</strong>`;
 
-    // Description
+    priceBlock.appendChild(price);
+
+    infoRow.appendChild(priceBlock);
+
+    // Bloc description
+    const descriptionBlock = document.createElement('div');
+    descriptionBlock.classList.add('description-block');
+
     const description = document.createElement('p');
     description.textContent = place.description || 'Aucune description fournie.';
-    card.appendChild(description);
+
+    descriptionBlock.appendChild(description);
+
+    infoRow.appendChild(descriptionBlock);
+
+    placeInfo.appendChild(infoRow);
+
+    // Bloc commodités
+    const amenitiesBlock = document.createElement('div');
+    amenitiesBlock.classList.add('amenities-block');
 
     // Titre de la section des commodités
     const amenitiesTitle = document.createElement('h4');
     amenitiesTitle.textContent = 'Commodités disponibles';
-    card.appendChild(amenitiesTitle);
+    amenitiesBlock.appendChild(amenitiesTitle);
 
     // Conteneur des commodités
     const amenitiesList = document.createElement('ul');
@@ -546,32 +570,69 @@ function displayPlaceDetails(place) {
             item.textContent = amenity.name || amenity.title || 'Commodité inconnue';
             amenitiesList.appendChild(item);
         }
-        card.appendChild(amenitiesList);
+        
     }
+    amenitiesBlock.appendChild(amenitiesList);
 
-    // Conteneur des avis
-    const reviewsContainer = document.createElement('div');
+    // Conteneur propriétaire
+    const ownerBlock = document.createElement('div');
+    ownerBlock.classList.add('owner-block');
+
+    // Titre du bloc propriétaire
+    const ownerTitle = document.createElement('h4');
+    ownerTitle.textContent = 'Propriétaire :';
+    ownerBlock.appendChild(ownerTitle);
+
+    // Contenu deu bloc
+    const ownerContent = document.createElement('div');
+    ownerContent.classList.add('owner-content');
+    ownerBlock.appendChild(ownerContent);
+
+    // Prénom + Nom
+    const ownerName = document.createElement('p');
+    ownerName.textContent = `${place.owner.first_name || ''} ${place.owner.last_name || ''}`;
+    ownerContent.appendChild(ownerName);
+
+    // Photo du propriétaire (ou image par défaut)
+    const ownerImage = document.createElement('img');
+    ownerImage.src = place.owner.profile_pic || 'images/default_user.png';
+    ownerImage.alt = `${place.owner.first_name || 'Propriétaire'} ${place.owner.last_name || ''}`;
+    ownerImage.classList.add('owner-photo');
+    ownerContent.appendChild(ownerImage);
+
+    // Conteneur aligné pour Commodités + Propriétaire
+    const infoExtrasRow = document.createElement('div');
+    infoExtrasRow.classList.add('info-extras-row');
+
+    infoExtrasRow.appendChild(amenitiesBlock);
+    infoExtrasRow.appendChild(ownerBlock);
+
+    placeInfo.appendChild(infoExtrasRow);
+
+    // Bloc avis
+    const reviewsBlock = document.createElement('div');
+    reviewsBlock.classList.add('reviews-block');
+
     if (Array.isArray(place.reviews)) {
-        // Log de débogage
-        console.log('Exemple de review :', place.reviews[0]);
-
         // Titre de la section des avis
         const reviewTitle = document.createElement('h4');
         reviewTitle.textContent = 'Avis des utilisateurs';
-        reviewsContainer.appendChild(reviewTitle);
+        reviewsBlock.appendChild(reviewTitle);
 
         // Affichage des avis
         for (const review of place.reviews) {
             const item = document.createElement('p');
             item.textContent = `${review.user?.first_name || 'Auteur'} ${review.user?.last_name || ''} : ${review.text || 'Aucun avis'}`;
-            reviewsContainer.appendChild(item);
+            reviewsBlock.appendChild(item);
         }
 
-        card.appendChild(reviewsContainer);
+        // Ajout du bloc des avis dans la nouvelle div
+        const reviewsContainer = document.querySelector('#place-reviews');
+        if (reviewsContainer) {
+            reviewsContainer.textContent = ''; // vide avant de recharger
+            reviewsContainer.appendChild(reviewsBlock);
+        }
     }
-
-    // Ajout final de la carte dans le DOM
-    placeInfo.appendChild(card);
 }
 
 /**

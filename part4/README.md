@@ -44,7 +44,9 @@ List of place (index.html):
 </p>
 
 Place details (place.html):  
-_SOON._
+<p align="center">
+  <img src="images/Place_details.png"/>
+</p>
 
 ## Requirements
 
