@@ -4,6 +4,7 @@ flask-bcrypt
 flask-jwt-extended
 flask-sqlalchemy
 sqlalchemy
+flask-cors
 
 # Testing
 pytest==8.4.0

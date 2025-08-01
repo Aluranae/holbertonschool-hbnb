@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask import request
+from flask_cors import cross_origin
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
@@ -35,6 +36,7 @@ class UserList(Resource):
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
     @api.marshal_with(user_output_model)
+    @cross_origin()
     def post(self):
         """Create a new user (admin only)"""
         claims = get_jwt()
@@ -55,6 +57,7 @@ class UserList(Resource):
             api.abort(400, str(e))
 
     @api.marshal_list_with(user_output_model)
+    @cross_origin()
     def get(self):
         """List all users"""
         return facade.get_all_users(), 200
@@ -67,6 +70,7 @@ class UserSearch(Resource):
     @api.response(200, 'User found')
     @api.response(400, 'Missing email query parameter')
     @api.response(404, 'User not found')
+    @cross_origin()
     def get(self):
         """Search a user by email"""
         email = request.args.get('email')
@@ -85,6 +89,7 @@ class UserResource(Resource):
     @api.marshal_with(user_output_model)
     @api.response(200, 'User retrieved')
     @api.response(404, 'User not found')
+    @cross_origin()
     def get(self, user_id):
         """Get a user by ID"""
         user = facade.get_user(user_id)
@@ -100,6 +105,7 @@ class UserResource(Resource):
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Forbidden')
     @api.response(404, 'User not found')
+    @cross_origin()
     def put(self, user_id):
         """Update a user (admin or self)"""
         identity = get_jwt_identity()  # str(user.id)
