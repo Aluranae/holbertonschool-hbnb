@@ -498,10 +498,10 @@ footer {
 }
 
 .details-button:hover {
-    background-color: #00ffff;   /* change la couleur de fond */
-    color: #111;                 /* texte sombre */
-    transform: scale(1.05);      /* léger agrandissement */
-    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; /* halo lumineux */
+    background-color: #00ffff;
+    color: #111;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
     transition: all 0.3s ease-in-out;
 }
 
