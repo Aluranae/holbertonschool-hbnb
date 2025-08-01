@@ -583,7 +583,7 @@ function displayPlaceDetails(place) {
     ownerTitle.textContent = 'Propriétaire :';
     ownerBlock.appendChild(ownerTitle);
 
-    // Contenu deu bloc
+    // Contenu du bloc
     const ownerContent = document.createElement('div');
     ownerContent.classList.add('owner-content');
     ownerBlock.appendChild(ownerContent);
