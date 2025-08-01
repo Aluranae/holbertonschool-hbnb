@@ -97,15 +97,20 @@ class PlaceList(Resource):
 
             # Construction de la réponse JSON
             response = {
-                'id': new_place.id,
-                'title': new_place.title,
-                'description': new_place.description,
-                'price': new_place.price,
-                'latitude': new_place.latitude,
-                'longitude': new_place.longitude,
-                'image_url': new_place.image_url,
-                'owner_id': new_place.owner.id
-            }
+                    'id': new_place.id,
+                    'title': new_place.title,
+                    'description': new_place.description,
+                    'price': new_place.price,
+                    'latitude': new_place.latitude,
+                    'longitude': new_place.longitude,
+                    'image_url': new_place.image_url,
+                    'owner': {
+                        'id': new_place.owner.id,
+                        'first_name': new_place.owner.first_name,
+                        'last_name': new_place.owner.last_name,
+                        'email': new_place.owner.email
+                    }
+                }
 
             return response, 201
 

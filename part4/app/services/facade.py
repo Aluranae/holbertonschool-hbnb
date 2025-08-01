@@ -149,17 +149,26 @@ class HBnBFacade:
             raw_amenities = place_data.get("amenities", [])
             if not isinstance(raw_amenities, list):
                 raise TypeError("amenities must be a list")
+            
+            # Validation explicite via les méthodes du modèle Place
+            validator = Place()  # instance "vide" pour utiliser les validateurs
+            title = validator.validate_title(place_data["title"], "Title")
+            description = validator.validate_description(place_data["description"], "Description")
+            price = validator.validate_price(place_data["price"], "Price")
+            latitude = validator.validate_latitude(place_data.get("latitude"), "Latitude")
+            longitude = validator.validate_longitude(place_data.get("longitude"), "Longitude")
 
             # Création du lieu
             place = Place(
-                title=place_data["title"],
-                description=place_data["description"],
-                price=place_data["price"],
-                latitude=place_data["latitude"],
-                longitude=place_data["longitude"],
+                title=title,
+                description=description,
+                price=price,
+                latitude=latitude,
+                longitude=longitude,
                 image_url=place_data.get("image_url"),
                 user_id=owner.id
             )
+
             db.session.add(place)  # ajout à la session
 
             # Ajout des commodités si elles sont valides
